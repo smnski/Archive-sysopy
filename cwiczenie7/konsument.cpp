@@ -53,7 +53,7 @@ int main(int argc, char* argv[]) {
 
     while(true) {
 
-        opuscSem(adres_sem_kons); //opusc konsument
+        opuscSem(adres_sem_kons); //opusc konsument - zwieksz wartosc
         std::cout << "Wartosc semafora konsumenta - opuszczenie: " << wartoscSem(adres_sem_prod) << std::endl;
 
         wczytDane = strlen(wpd->bufor[wpd->wyjmij]);
@@ -69,7 +69,7 @@ int main(int argc, char* argv[]) {
 
         if(wczytDane < NELE) break;
 
-        for(int i = 0; i < wczytDane; i++) //podnies producent
+        for(int i = 0; i < wczytDane; i++) //podnies producent - zmniejsz wartosc
             podniesSem(adres_sem_prod);
         std::cout << "Wartosc semafora producenta - podniesienie: " << wartoscSem(adres_sem_prod) << std::endl;
 

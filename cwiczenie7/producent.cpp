@@ -67,10 +67,10 @@ int main(int argc, char* argv[]) {
             _exit(1);
         }
         
-        podniesSem(adres_sem_kons); //podnies konsument
+        podniesSem(adres_sem_kons); //podnies konsument - zmniejsz wartosc
         std::cout << "Wartosc semafora konsumenta - podniesienie: " << wartoscSem(adres_sem_prod) << std::endl;
 
-        for(int i = 0; i < wczytDane; i++) //opusc producent
+        for(int i = 0; i < wczytDane; i++) //opusc producent - zwieksz wartosc
             opuscSem(adres_sem_prod);
         std::cout << "Wartosc semafora producenta - opuszczenie: " << wartoscSem(adres_sem_prod) << std::endl;
 
