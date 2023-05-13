@@ -1,6 +1,7 @@
 //Autor: Szymon Urbanski
 #include <iostream>
 #include <ctime>
+#include <string.h>
 #include "SemMem.h"
 
 typedef struct {
@@ -23,7 +24,6 @@ int losowaLiczba(int a, int b) {
 
 void startMessage(SegmentPD* wskaznik, const char* nazwa, int adres) {
     std::cout << "Producent - Wywolanie programu." << std::endl;
-    std::cout << "Producent - Przesylanie towaru po: " << NELE << " bajtow." << std::endl;
     std::cout << "Producent - Uzyskano dostep do pamieci dzielonej. ";
     std::cout << "Nazwa: " << nazwa << ", Adres: " << adres << ", Rozmiar: " << sizeof(wskaznik) << std::endl;
 }
@@ -48,14 +48,34 @@ int main(int argc, char* argv[]) {
 
     int fd = open(nazwa_pliku, O_RDONLY, 0666);
 
+    char info[100];
     int wczytDane;
 
-    while(wczytDane == NELE) {
+    while( (wczytDane = read(fd, wpd->bufor[wpd->wstaw], NELE)) ) {
 
-        opuscSem(adres_sem_prod);
-        
+        std::cout << "Wartosc semafora producenta - poczatek: " << wartoscSem(adres_sem_prod) << std::endl;
 
+        if(wczytDane < NELE) {
+            wpd->bufor[wpd->wstaw][wczytDane] = '\0';
+        }
+
+        std::cout << "Ilosc wczytanych danych: " << wczytDane << std::endl;
+        sprintf(info, "Producent - wczytane dane: %.*s\n", NELE, wpd->bufor[wpd->wstaw]);
+
+        if(write(STDOUT_FILENO, info, strlen(info)) == -1) {
+            perror("ERROR: Funkcja write w producent.cpp napotkala problem.\n");
+            _exit(1);
+        }
         
+        wpd->wstaw = (wpd->wstaw + 1) % NBUF;
+
+        for(int i = 0; i < wczytDane; i++)
+            opuscSem(adres_sem_prod);
+        
+        std::cout << "Wartosc semafora producenta - opuszczenie:" << wartoscSem(adres_sem_prod);
+
+        podniesSem(adres_sem_kons);
+        std::cout << "Wartosc semafora konsumenta - podniesienie:" << wartoscSem(adres_sem_prod);
     }
 
 }
