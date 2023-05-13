@@ -46,4 +46,16 @@ int main(int argc, char* argv[]) {
 
     startMessage(wpd, nazwa_SHM, adres_SHM);
 
+    int fd = open(nazwa_pliku, O_RDONLY, 0666);
+
+    int wczytDane;
+
+    while(wczytDane == NELE) {
+
+        opuscSem(adres_sem_prod);
+        
+
+        
+    }
+
 }
