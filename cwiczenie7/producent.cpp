@@ -23,9 +23,20 @@ int losowaLiczba(int a, int b) {
 }
 
 void startMessage(SegmentPD* wskaznik, const char* nazwa, int adres) {
-    std::cout << "Producent - Wywolanie programu." << std::endl;
-    std::cout << "Producent - Uzyskano dostep do pamieci dzielonej. ";
-    std::cout << "Nazwa: " << nazwa << ", Adres: " << adres << ", Rozmiar: " << sizeof(wskaznik) << std::endl;
+    std::cout << "      Producent - Wywolanie programu." << std::endl;
+    std::cout << "      Producent - Uzyskano dostep do pamieci dzielonej. ";
+    std::cout << "      Nazwa: " << nazwa << ", Adres: " << adres << ", Rozmiar: " << sizeof(wskaznik) << std::endl;
+}
+
+char info[100];
+void wypiszKomunikat(int ilosc, SegmentPD* wpd) {
+    std::cout << "Ilosc wczytanych danych: " << ilosc << std::endl;
+    sprintf(info, "Producent - wczytane dane: %.*s\n", NELE, wpd->bufor[wpd->wstaw]);
+
+    if(write(STDOUT_FILENO, info, strlen(info)) == -1) {
+        perror("ERROR: Funkcja write w producent.cpp napotkala problem.\n");
+        _exit(1);
+    }
 }
 
 int main(int argc, char* argv[]) {
@@ -48,33 +59,23 @@ int main(int argc, char* argv[]) {
 
     int fd = open(nazwa_pliku, O_RDONLY, 0666);
 
-    char info[100];
+    // Glowna petla
     int wczytDane;
-
     while( (wczytDane = read(fd, wpd->bufor[wpd->wstaw], NELE)) ) {
 
-        std::cout << "Wartosc semafora producenta - poczatek: " << wartoscSem(adres_sem_prod) << std::endl;
-
-        if(wczytDane < NELE) {
+        if(wczytDane < NELE) 
             wpd->bufor[wpd->wstaw][wczytDane] = '\0';
-        }
-
-        std::cout << "Ilosc wczytanych danych: " << wczytDane << std::endl;
-        sprintf(info, "Producent - wczytane dane: %.*s\n", NELE, wpd->bufor[wpd->wstaw]);
-
-        if(write(STDOUT_FILENO, info, strlen(info)) == -1) {
-            perror("ERROR: Funkcja write w producent.cpp napotkala problem.\n");
-            _exit(1);
-        }
         
-        podniesSem(adres_sem_kons); //podnies konsument - zmniejsz wartosc
-        std::cout << "Wartosc semafora konsumenta - podniesienie: " << wartoscSem(adres_sem_prod) << std::endl;
+        wypiszKomunikat(wczytDane, wpd);
 
-        for(int i = 0; i < wczytDane; i++) //opusc producent - zwieksz wartosc
+        podniesSem(adres_sem_kons); //podnies konsument - zmniejsz wartosc
+        std::cout << "Wartosc semafora konsumenta - podniesienie: " << wartoscSem(adres_sem_kons) << std::endl;
+
+        for(int i = 0; i < NELE; i++) //opusc producent - zwieksz wartosc
             opuscSem(adres_sem_prod);
         std::cout << "Wartosc semafora producenta - opuszczenie: " << wartoscSem(adres_sem_prod) << std::endl;
 
-        wpd->wstaw = (wpd->wstaw + 1) % NBUF;
+        wpd->wstaw = (wpd->wstaw + 1) % NELE;
     }
 
 }
