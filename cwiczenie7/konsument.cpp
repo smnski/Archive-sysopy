@@ -25,7 +25,7 @@ int losowaLiczba(int a, int b) {
 void startMessage(SegmentPD* wskaznik, const char* nazwa, int adres) {
     std::cout << "      Konsument - Wywolanie programu." << std::endl;
     std::cout << "      Konsument - Uzyskano dostep do pamieci dzielonej. ";
-    std::cout << "      Nazwa: " << nazwa << ", Adres: " << adres << ", Rozmiar: " << sizeof(wskaznik) << std::endl;
+    std::cout << "Nazwa: " << nazwa << ", Adres: " << adres << ", Rozmiar: " << sizeof(wskaznik) << std::endl;
 }
 
 char info[100];

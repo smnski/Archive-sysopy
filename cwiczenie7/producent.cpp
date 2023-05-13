@@ -25,7 +25,7 @@ int losowaLiczba(int a, int b) {
 void startMessage(SegmentPD* wskaznik, const char* nazwa, int adres) {
     std::cout << "      Producent - Wywolanie programu." << std::endl;
     std::cout << "      Producent - Uzyskano dostep do pamieci dzielonej. ";
-    std::cout << "      Nazwa: " << nazwa << ", Adres: " << adres << ", Rozmiar: " << sizeof(wskaznik) << std::endl;
+    std::cout << "Nazwa: " << nazwa << ", Adres: " << adres << ", Rozmiar: " << sizeof(wskaznik) << std::endl;
 }
 
 char info[100];
@@ -65,17 +65,16 @@ int main(int argc, char* argv[]) {
 
         if(wczytDane < NELE) 
             wpd->bufor[wpd->wstaw][wczytDane] = '\0';
-        
+
         wypiszKomunikat(wczytDane, wpd);
-
-        podniesSem(adres_sem_kons); //podnies konsument - zmniejsz wartosc
-        std::cout << "Wartosc semafora konsumenta - podniesienie: " << wartoscSem(adres_sem_kons) << std::endl;
-
+        
         for(int i = 0; i < NELE; i++) //opusc producent - zwieksz wartosc
             opuscSem(adres_sem_prod);
         std::cout << "Wartosc semafora producenta - opuszczenie: " << wartoscSem(adres_sem_prod) << std::endl;
 
         wpd->wstaw = (wpd->wstaw + 1) % NELE;
-    }
 
+        podniesSem(adres_sem_kons); //podnies konsument - zmniejsz wartosc
+        std::cout << "Wartosc semafora konsumenta - podniesienie: " << wartoscSem(adres_sem_kons) << std::endl;
+    }
 }
