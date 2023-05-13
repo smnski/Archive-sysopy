@@ -32,18 +32,18 @@ int main(int argc, char* argv[]) {
     
     // Przypisanie wartosci podanych w argumentach
     const char* nazwa_pliku = argv[1];
-    const char* nazwa_sem = argv[2];
-    const char* nazwa_SHM = argv[3];
+    const char* nazwa_sem_prod = argv[2];
+    const char* nazwa_sem_kons = argv[3];
+    const char* nazwa_SHM = argv[4];
 
-    sem_t* adres_sem = otworzSem(nazwa_sem);
+    sem_t* adres_sem_prod = otworzSem(nazwa_sem_prod);
+    sem_t* adres_sem_kons = otworzSem(nazwa_sem_kons);
+
     int adres_SHM = otworzSHM(nazwa_SHM);
-    
+
     SegmentPD* wpd = (SegmentPD *) mmapSHM(sizeof(SegmentPD), adres_SHM);
     wpd -> wstaw = 0;
 
     startMessage(wpd, nazwa_SHM, adres_SHM);
-
-    int fd = open(nazwa_pliku, O_RDONLY, 0666);
-
 
 }
