@@ -1,0 +1,53 @@
+========================================================================
+Autor: Szymon Urbański,                               Krakow, 6.05.2023
+Projekt: Semafory                                  
+========================================================================
+
+# Zawartosc:
+============
+--------------------------------------------------------------------
+1. Programy potrzebne do rozwiazania zadania:
+--------------------------------------------------------------------
+# obsluga:
+       Wlasnego autorstwa biblioteka zawierajaca funkcje do obslugi semaforow.
+
+# powielanie:
+       Program tworzy semafor za pomoca powyzszej biblioteki, z ktorego korzystac beda procesy potomne.
+       Kolejno, tworzy on plik "numer.txt" (badz nadpisuje, jesli juz istnieje) i wpisuje do niego wartosc "0".
+       Nastepnie tworzy on dana ilosc procesow potomnych, ktore uruchamiaja program odpowiedzialny za ich
+       sprawy wlasne oraz czesc krytyczna. Na koniec wypisuje wynik w pliku, porownuje go do oczekiwanej
+       wartosci oraz usuwa stworzony na poczatku semafor.
+
+# main:
+       Program odpowiada za czesc spraw wlasnych oraz czesc krytyczna procesow potomnych. Za pomoca funkcji wait
+       symuluje rozny czas dzialania programow, za pomoca semaforow kontroluje kolejnosci ich dzialania
+       oraz poprzez zwiekszanie liczby w "numer.txt" umozliwia sprawdzenie poprawnosci projektu.
+
+------------------------------------------------------------------------
+2. Jak uruchomic programy:
+------------------------------------------------------------------------
+
+Katalog zawiera program Makefile do kompilacji, linkowania
+i uruchamiania powyzszych programow, a takze czyszczenia katalogu 
+i jego archiwizacji.
+
+-> Aby skompilowac wszystkie programy bez ich uruchamiania, nalezy wykonac:
+       make all
+
+-> Gdy programy sa juz skompilowane, aby uruchomic program z zadania, nalezy wykonac:
+       make run F={funkcja_realizujaca} P={ilosc_powielen} S={ilosc_sekcji}
+*Gdzie za {funkcja_realizujaca} podajemy nazwe programu, odpowiedzialnego za czesc wlasnych spraw oraz krytyczna procesow.
+*Za {ilosc_powielen} podajemy ilosc powielen, jaka ma wykonac program. 
+*Za {ilosc_sekcji} podajemy ilosc sekcji, ktore wykonaja procesy potomne.
+
+***Przykladowe uruchomienie programu:
+    make run F=main.x P=3 S=3
+
+-> Aby wyczyscic zawartosc katalogu (usunac zbedne pliki), nalezy wykonac:
+       make clean
+
+-> W celu archiwizacji oraz kompresji katalogu, nalezy wykonac:
+       make tar
+
+------------------------------------------------------------------------
+------------------------------------------------------------------------

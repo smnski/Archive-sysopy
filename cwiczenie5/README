@@ -1,0 +1,57 @@
+========================================================================
+Autor: Szymon Urbański,                               Krakow, 30.04.2023
+Projekt: Potoki                                  
+========================================================================
+
+# Zawartosc:
+============
+--------------------------------------------------------------------
+1. Programy potrzebne do rozwiazania zadania:
+--------------------------------------------------------------------
+
+# main:
+       Program tworzy dwa procesy potomne. Nastepnie pierwszy z nich uruchamia
+       program producenta, zas drugi konsumenta. Przesylaja one miedzy soba dane
+       za pomoca potoku nazwanego.
+
+# konsument:
+       Program pobiera dane z potoku i umieszcza je w innym pliku. Pobrane ilosci
+       danych jak i czas snu sa losowe w kazdej iteracji.
+
+# producent:
+       Program pobiera dane z pliku i umieszcza je w potoku. Pobrane ilosci
+       danych jak i czas snu sa losowe w kazdej iteracji.
+
+------------------------------------------------------------------------
+2. Jak uruchomic programy:
+------------------------------------------------------------------------
+
+Katalog zawiera program Makefile do kompilacji, linkowania
+i uruchamiania powyzszych programow, a takze czyszczenia katalogu 
+i jego archiwizacji.
+
+-> Aby skompilowac wszystkie programy bez ich uruchamiania, nalezy wykonac:
+       make all
+
+-> Gdy programy sa juz skompilowane, aby uruchomic program z zadania, nalezy wykonac:
+       make run W="{plik_z_danymi}" Z="{plik_z_wynikiem}" N="{nazwa_potoku}"
+*Gdzie za {plik_z_danymi} podajemy nazwe pliku zawierajacego dane do przeslania.
+*Za {plik_z_wynikiem} podajemy nazwe pliku, w ktorym mamy umiescic wynik programu.
+*Za {nazwa_potoku} podajemy nazwe potoku, z ktorego beda korzystac programy.
+
+***Przykladowe uruchomienie programu:
+    make run W="daneProd.txt" Z="output.txt" N="potok"
+
+-> Aby porownac pliki po zakonczeniu dzialania programu nalezy wykonac:
+    make compare W="{plik_z_danymi}" Z="{plik_z_wynikiem}"
+***Przykladowe porownanie plikow:
+    make compare W="daneProd.txt" Z="output.txt"
+
+-> Aby wyczyscic zawartosc katalogu (usunac zbedne pliki), nalezy wykonac:
+       make clean
+
+-> W celu archiwizacji oraz kompresji katalogu, nalezy wykonac:
+       make tar
+
+------------------------------------------------------------------------
+------------------------------------------------------------------------

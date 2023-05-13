@@ -1,0 +1,77 @@
+========================================================================
+Autor: Szymon Urbański,                               Krakow, 18.03.2023
+Projekt: Procesy                                      Zadanie 1
+========================================================================
+
+# Zawartosc:
+============
+--------------------------------------------------------------------
+1. Programy do kolejnych podpunktów zadania:
+--------------------------------------------------------------------
+
+# cw1a:
+Program wypisuje kolejno identyfikatory: UID, GID, PID, PPID, PGID dla danego procesu.
+
+# cw1b:
+Program wywoluje funkcje fork 3 razy w petli i wypisuje identyfikatory UID, GID, PID, PPID, PGID
+dla procesu macierzystego oraz utworzonych procesow potomnych.
+
+# cw1c:
+Program wywoluje funkcje fork 3 razy w petli i sprawia, ze utworzone procesy potomne
+sa adoptowane przez proces init lub systemd, przy uzyciu funkcji sleep. Nastepnie wypisuje
+identyfikatory UID, GID, PID, PPID, PGID dla procesu macierzystego oraz procesow potomnych.
+
+# cw1d:
+Program wywoluje funkcje fork 3 razy w petli i grupuje procesy potomne pokoleniami
+za pomoca funkcji sleep. Nastepnie wypisuje identyfikatory UID, GID, PID, PPID, PGID
+dla procesu macierzystego oraz procesow potomnych.
+
+# cw1e:
+Program wywoluje funkcje fork 3 razy w petli i sprawia, ze kazdy proces
+potomny staje sie liderem swojej wlasnej grupy procesow, przy uzyciu
+funkcji setpgid. Nastepnie wypisuje identyfikatory UID, GID, PID, PPID, PGID
+dla procesu macierzystego oraz procesow potomnych.
+
+------------------------------------------------------------------------
+2. Dodatkowe pliki tekstowe do danych podpunktów zadania:
+------------------------------------------------------------------------
+
+# cw1d - drzewo genealogiczne:
+Plik zawiera przykladowy wynik wywolania programu cw1d oraz na jego podstawie
+przedstawia drzewo genealogiczne procesow potomnych z zadania.
+
+# cw1e - ilosc procesow:
+Plik zawiera odpowiedz na pytanie ile procesow powstanie przy n-krotnym wywolaniu funkcji fork
+oraz uzasadnienie odpowiedzi.
+
+------------------------------------------------------------------------
+3. Jak uruchomic programy:
+------------------------------------------------------------------------
+
+Katalog zawiera program Makefile do kompilacji, linkowania
+i uruchamiania powyzszych programow, a takze czyszczenia katalogu 
+i jego archiwizacji.
+
+-> Aby uruchomic programy do podpunktow a-e zadania, nalezy wykonac komende:
+    make run1x
+*Gdzie za "x" wpisujemy odpowiedni podpunkt zadania.
+*Dla przykładu: make run1a uruchomi program do podpunktu a zadania.
+
+---> Dla pewnosci, ze wykonywane sa polecenia zdefiniowane w Makefile,
+     a nie wbudowane polecenia make'a, uzyc opcji -r, tzn.
+       make -r run1x
+
+-> Aby skompilowac wszystkie programy bez ich uruchamiania, nalezy wykonac:
+       make all
+
+-> Aby wyczyscic zawartosc katalogu (usunac zbedne pliki), nalezy wykonac:
+       make clean
+
+-> W celu archiwizacji oraz kompresji katalogu, nalezy wykonac:
+       make tar
+
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+
+
+

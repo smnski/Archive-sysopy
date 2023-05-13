@@ -1,0 +1,61 @@
+========================================================================
+Autor: Szymon Urbański,                               Krakow, 23.03.2023
+Projekt: Procesy                                      Zadanie 2
+========================================================================
+
+# Zawartosc:
+============
+--------------------------------------------------------------------
+1. Programy potrzebne do rozwiazania zadania:
+--------------------------------------------------------------------
+
+# rozw:
+Program wywoluje funkcje fork 3 razy w petli. Nastepne wypisuje identyfikatory UID, GID, PID, PPID, PGID
+dla procesu macierzystego oraz dla utworzonych procesow potomnych. Robi to za pomoca pomoca funkcji execlp,
+ktora uruchamia program na podstawie nazwy podanej jako argument programu procesu macierzystego.
+
+# wypisz:
+Program wypisuje identyfikatory UID, GID, PID, PPID, PGID dla danego procesu.
+
+------------------------------------------------------------------------
+2. Dodatkowe pliki tekstowe do danych podpunktów zadania:
+------------------------------------------------------------------------
+
+# iloscProcesow:
+Plik zawiera odpowiedz na pytanie, ile procesow powstanie przy n-krotnym
+wywolaniu funkcji fork oraz uzasadnienie odpowiedzi.
+
+------------------------------------------------------------------------
+3. Jak uruchomic programy:
+------------------------------------------------------------------------
+
+Katalog zawiera program Makefile do kompilacji, linkowania
+i uruchamiania powyzszych programow, a takze czyszczenia katalogu 
+i jego archiwizacji.
+ 
+-> Aby program zadzialal, plik wypisz.cpp musi byc skompilowany. Mozemy go skompilowac za pomoca:
+       make runPrep
+
+-> Aby uruchomic program rozwiazujacy zadanie nalezy wykonac:
+       make run nazwa="x"
+*Gdzie za "x" umieszczamy nazwe programu wypisujacego identyfikatory dla procesow potomnych.
+*W mojej wersji programu bedzie to "wypisz.x". Czyli: make run nazwa="wypisz.x"
+
+---> Dla pewnosci, ze wykonywane sa polecenia zdefiniowane w Makefile,
+     a nie wbudowane polecenia make'a, uzyc opcji -r, tzn.
+       make -r run nazwa="x"
+
+-> Aby skompilowac wszystkie programy bez ich uruchamiania, nalezy wykonac:
+       make all
+
+-> Aby wyczyscic zawartosc katalogu (usunac zbedne pliki), nalezy wykonac:
+       make clean
+
+-> W celu archiwizacji oraz kompresji katalogu, nalezy wykonac:
+       make tar
+
+------------------------------------------------------------------------
+------------------------------------------------------------------------
+
+
+

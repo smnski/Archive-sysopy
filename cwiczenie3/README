@@ -1,0 +1,69 @@
+========================================================================
+Autor: Szymon Urbański,                               Krakow, 3.04.2023
+Projekt: Sygnaly                                      
+========================================================================
+
+# Zawartosc:
+============
+--------------------------------------------------------------------
+1. Programy potrzebne do rozwiazania zadania:
+--------------------------------------------------------------------
+
+# cw3a:
+       Program obsluguje sygnaly z mozliwosciami: wykonania operacji domyslnej, 
+       ignorowania oraz przechwycenia sygnalu. Oczekuje on na sygnal za pomoca
+       funkcji wait.
+
+# cw3b:
+       Program uruchamia powyzszy program w procesie potomnym poprzez funkcje execlp.
+       Wysyla do niego sygnaly poprzez funkcje systemowa kill z procesu macierzystego.
+
+# ChildGen:
+       Program tworzy kilka procesow potomnych, ktore poprzez execlp uruchamiaja program
+       z podpunktu a do obslugi sygnalow.
+
+# cw3c:
+       Program tworzy w procesie macierzystym pierwotny proces potomny. Nastepnie ustawia
+       go jako lidera nowej grupy procesow potomnych. Za pomoca execlp uruchamia powyzszy
+       program ChildGen, a nastepnie z pierwszego procesu macierzystego wysyla sygnaly
+       do calej grupy procesow potomnych.
+
+       Nastepnie lider grupy procesow wypisuje PID oraz status zakonczenia wszystkich
+       procesow potomnych.
+
+       Na samym koncu zostaje wypisana informacja o zakonczeniu dzialania pierwotnego
+       procesu potomnego, jego PID oraz status zakonczenia.
+
+------------------------------------------------------------------------
+2. Jak uruchomic programy:
+------------------------------------------------------------------------
+
+Katalog zawiera program Makefile do kompilacji, linkowania
+i uruchamiania powyzszych programow, a takze czyszczenia katalogu 
+i jego archiwizacji.
+ 
+-> Aby skompilowac dowolny program z zadania, nalezy wykonac:
+       make run3?
+*Gdzie za ? wpisujemy odpowiedni podpunkt zadania (a-c).
+
+-> Aby skompilowac wszystkie programy bez ich uruchamiania, nalezy wykonac:
+       make all
+
+-> Gdy programy sa juz skompilowane, aby uruchomic dowolny program z zadania, nalezy wykonac:
+       ./cw3?.x {mechanizm} {nrSygnalu}
+*Gdzie za ? wpisujemy odpowiedni podpunkt zadania (a-c).
+
+*Gdzie za {mechanizm} podajemy podajemy odpowiedni sposob obslugi sygnalu.
+***Mozliwe mechanizmy obslugi sygnalu: default, handle, ignore
+
+*Gdzie za {nrSygnalu} podajemy odpowiedni nr sygnalu.
+***Mozliwe nr sygnalu: Dowolna liczba z przedzialu 1-64
+
+-> Aby wyczyscic zawartosc katalogu (usunac zbedne pliki), nalezy wykonac:
+       make clean
+
+-> W celu archiwizacji oraz kompresji katalogu, nalezy wykonac:
+       make tar
+
+------------------------------------------------------------------------
+------------------------------------------------------------------------
