@@ -40,6 +40,7 @@ int main(int argc, char* argv[]) {
     //Sprawdzenie, czy program zostal uruchomiony z poprawnymi argumentami.
     if(!czyPoprawneDane(argc, argv)) exit(1);
 
+    std::cout << "____________________________________________________________________" << std::endl;
     sem_t* adres_sem_prod = stworzSem(nazwa_sem_prod, NELE);
     sem_t* adres_sem_kons = stworzSem(nazwa_sem_kons, 0);
 
@@ -52,6 +53,7 @@ int main(int argc, char* argv[]) {
     int des_SHM = stworzSHM(nazwa_SHM);
     truncSHM(des_SHM);
     std::cout << "Utworzono nowy Shared Memory Object." << std::endl;
+    std::cout << "____________________________________________________________________" << std::endl;
 
     // Pierwszy fork
     switch(fork()) {

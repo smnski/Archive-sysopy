@@ -67,15 +67,14 @@ int main(int argc, char* argv[]) {
             _exit(1);
         }
         
-        wpd->wstaw = (wpd->wstaw + 1) % NBUF;
+        podniesSem(adres_sem_kons); //podnies konsument
+        std::cout << "Wartosc semafora konsumenta - podniesienie: " << wartoscSem(adres_sem_prod) << std::endl;
 
-        for(int i = 0; i < wczytDane; i++)
+        for(int i = 0; i < wczytDane; i++) //opusc producent
             opuscSem(adres_sem_prod);
-        
-        std::cout << "Wartosc semafora producenta - opuszczenie:" << wartoscSem(adres_sem_prod);
+        std::cout << "Wartosc semafora producenta - opuszczenie: " << wartoscSem(adres_sem_prod) << std::endl;
 
-        podniesSem(adres_sem_kons);
-        std::cout << "Wartosc semafora konsumenta - podniesienie:" << wartoscSem(adres_sem_prod);
+        wpd->wstaw = (wpd->wstaw + 1) % NBUF;
     }
 
 }
