@@ -3,9 +3,6 @@
 #include <ctime>
 #include "SemMem.h"
 
-#define NELE 20
-#define NBUF 5
-
 typedef struct {
     char bufor[NBUF][NELE];
     int wstaw, wyjmij;

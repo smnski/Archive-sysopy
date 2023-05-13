@@ -20,16 +20,19 @@ bool czyPoprawneDane(int argc, char *argv[]) {
 return true;
 }
 
-const char* nazwa_sem = "Semafor";
+const char* nazwa_sem_prod = "semaforProd";
+const char* nazwa_sem_kons = "semaforKons";
 const char* nazwa_SHM = "/SHM_Object";
 
 void usun_Sem_SHM() {
-    usunSem(nazwa_sem);
+    usunSem(nazwa_sem_prod);
+    usunSem(nazwa_sem_kons);
     usunSHM(nazwa_SHM);
 }
 
 void usun_Sem_SHM_Sig(int signum) {
-    usunSem(nazwa_sem);
+    usunSem(nazwa_sem_prod);
+    usunSem(nazwa_sem_kons);
     usunSHM(nazwa_SHM);
 }
 
@@ -37,9 +40,14 @@ int main(int argc, char* argv[]) {
     //Sprawdzenie, czy program zostal uruchomiony z poprawnymi argumentami.
     if(!czyPoprawneDane(argc, argv)) exit(1);
 
-    sem_t* adres_sem = stworzSem(nazwa_sem);
-    int wartosc_sem = wartoscSem(adres_sem);
-    std::cout << "Utworzono semafor o adresie: " << adres_sem << ", wartosci: " << wartosc_sem << std::endl;
+    sem_t* adres_sem_prod = stworzSem(nazwa_sem_prod, NELE);
+    sem_t* adres_sem_kons = stworzSem(nazwa_sem_kons, 0);
+
+    int wartosc_sem_prod = wartoscSem(adres_sem_prod);
+    int wartosc_sem_kons = wartoscSem(adres_sem_kons);
+
+    std::cout << "Utworzono semafor producenta o adresie: " << adres_sem_prod << ", wartosci: " << wartosc_sem_prod << std::endl;
+    std::cout << "Utworzono semafor konsumenta o adresie: " << adres_sem_kons << ", wartosci: " << wartosc_sem_kons << std::endl;
 
     int des_SHM = stworzSHM(nazwa_SHM);
     truncSHM(des_SHM);
@@ -53,7 +61,7 @@ int main(int argc, char* argv[]) {
         break;
 
         case 0:
-            if(execlp("./producent.x", "producent", argv[1], nazwa_sem, nazwa_SHM, NULL) == -1) {
+            if(execlp("./producent.x", "producent", argv[1], nazwa_sem_prod, nazwa_sem_kons, nazwa_SHM, NULL) == -1) {
                 perror("ERROR: x - x - SemMem.h"); //update
                 exit(1);
             }
@@ -71,7 +79,7 @@ int main(int argc, char* argv[]) {
         break;
 
         case 0:
-            if(execlp("./konsument.x", "konsument", argv[2], nazwa_sem, nazwa_SHM, NULL) == -1) {
+            if(execlp("./konsument.x", "konsument", argv[2], nazwa_sem_prod, nazwa_sem_kons, nazwa_SHM, NULL) == -1) {
                 perror("ERROR: x - x - SemMem.h"); //update
                 exit(1);
             }

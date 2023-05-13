@@ -5,13 +5,18 @@
 #include <unistd.h>
 #include <sys/mman.h>
 
+//___________________________________________________//~Deklaracje~//___________________________________________________//
+
+#define NELE 20
+#define NBUF 5
+
 //___________________________________________________//~Semafory~//___________________________________________________//
 
 // Funkcja tworzaca semafor o danej nazwie.
-    // Argument O_CREAT pozwala na jego stworzenie, argument 1 sprawia, ze staje sie on dostepny dla dowolnego procesu.
-sem_t* stworzSem(const char* nazwa) {
+    // Argument O_CREAT pozwala na jego stworzenie.
+sem_t* stworzSem(const char* nazwa, int size) {
 
-    sem_t* adres = sem_open(nazwa, O_CREAT, 0644, 1);
+    sem_t* adres = sem_open(nazwa, O_CREAT, 0644, size);
     if(adres == SEM_FAILED) {
         perror("ERROR: Funkcja sem_open - stworzSem - obsluga.h");
         _exit(1);
