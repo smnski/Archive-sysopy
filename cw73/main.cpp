@@ -41,7 +41,7 @@ int main(int argc, char* argv[]) {
     if(!czyPoprawneDane(argc, argv)) exit(1);
 
     std::cout << "____________________________________________________________________" << std::endl;
-    sem_t* adres_sem_prod = stworzSem(nazwa_sem_prod, 0);
+    sem_t* adres_sem_prod = stworzSem(nazwa_sem_prod, 1);
     sem_t* adres_sem_kons = stworzSem(nazwa_sem_kons, 0);
 
     int wartosc_sem_prod = wartoscSem(adres_sem_prod);

@@ -30,23 +30,10 @@ int main(int argc, char* argv[]) {
     int wDane;
     while(true) {
 
-        // Produkcja towaru
-        wDane = read(fd, wpd->bufor[wpd->wstaw], NELE);
-        std::cout << "wDane prod: " << wDane << std::endl;
-        if(wDane < NELE)
-            wpd->bufor[wpd->wstaw][wDane] = '%';
-        std::cout << "Towar - prod: " << wpd->bufor[wpd->wstaw] << std::endl;
+        podniesSem(adres_sem_kons); //wait
+        std::cout<<"ping\n";
+        opuscSem(adres_sem_prod); //post
 
-        podniesSem(adres_sem_kons); //zmniejsz o 1
-        
-        
-
-        std::cout << wartoscSem(adres_sem_prod) << std::endl;
-        wpd->wstaw = (wpd->wstaw +1) % NBUF;
-
-        opuscSem(adres_sem_prod); //zwieksz o 1
-
-        if(wDane < NELE) break;
         sleep(1);
     }
 }

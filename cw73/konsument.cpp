@@ -37,16 +37,14 @@ int main(int argc, char* argv[]) {
     int fd = open(nazwa_pliku, O_WRONLY | O_CREAT | O_TRUNC, 0666);
 
     // Glowna petla
-    int wDane; int counter = 0;
+    int wDane;
     while(true) {
-        opuscSem(adres_sem_kons); //zwieksz o 1
+        
+        podniesSem(adres_sem_prod);
+        std::cout<<"pong\n";
+        opuscSem(adres_sem_kons);
 
-        std::cout << "Towar - kons: " << wpd->bufor[wpd->wyjmij] << std::endl;
+        sleep(1);
 
-        wpd->wyjmij = (wpd->wyjmij +1) % NBUF;
-
-        podniesSem(adres_sem_prod); //zmniejsz o 1
-        counter++;
-        if(counter == 5) break;
     }
 }
