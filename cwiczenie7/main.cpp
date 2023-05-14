@@ -41,7 +41,7 @@ int main(int argc, char* argv[]) {
     if(!czyPoprawneDane(argc, argv)) exit(1);
 
     std::cout << "____________________________________________________________________" << std::endl;
-    sem_t* adres_sem_prod = stworzSem(nazwa_sem_prod, NELE);
+    sem_t* adres_sem_prod = stworzSem(nazwa_sem_prod, 1);
     sem_t* adres_sem_kons = stworzSem(nazwa_sem_kons, 0);
 
     int wartosc_sem_prod = wartoscSem(adres_sem_prod);
@@ -51,8 +51,8 @@ int main(int argc, char* argv[]) {
     std::cout << "Utworzono semafor konsumenta o adresie: " << adres_sem_kons << ", wartosci: " << wartosc_sem_kons << std::endl;
 
     int des_SHM = stworzSHM(nazwa_SHM);
-    truncSHM(des_SHM);
-    std::cout << "Utworzono nowy Shared Memory Object." << std::endl;
+    int dl_SHM = truncSHM(des_SHM, 200);
+    std::cout << "Utworzono nowy obiekt pamieci dzielonej o deskryptorze: " << des_SHM << ", rozmiarze: " << dl_SHM << std::endl;
     std::cout << "____________________________________________________________________" << std::endl;
 
     // Pierwszy fork

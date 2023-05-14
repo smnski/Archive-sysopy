@@ -1,4 +1,3 @@
-//Autor: Szymon Urbanski
 #include <iostream>
 #include <ctime>
 #include <string.h>
@@ -9,15 +8,35 @@ typedef struct {
     int wstaw, wyjmij;
 } SegmentPD;
 
-void startMessage(SegmentPD* wskaznik, const char* nazwa, int adres) {
-    std::cout << "      Konsument - Wywolanie programu." << std::endl;
-    std::cout << "      Konsument - Uzyskano dostep do pamieci dzielonej. ";
-    std::cout << "Nazwa: " << nazwa << ", Adres: " << adres << ", Rozmiar: " << sizeof(wskaznik) << std::endl;
+bool czyKoniecDanych(SegmentPD* wpd, int *koniec) {
+    for(int i = 0; i < NELE; i++) {
+        if(wpd->bufor[wpd->wyjmij][i] == '\0') {
+            *koniec = i;
+            return true;
+        }
+    }
+return false;
 }
 
 char info[100];
-void wypiszKomunikat(int ilosc, char* towar) {
-    sprintf(info, "Konsument - wczytane dane: %.*s\n", NELE, towar);
+void wypiszKomunikat(int ilosc, SegmentPD* towar) {
+    sprintf(info, "         Konsument - wczytane dane: %.*s | ilosc: %d\n", NELE, towar->bufor[towar->wyjmij], ilosc);
+
+    if(write(STDOUT_FILENO, info, strlen(info)) == -1) {
+        perror("ERROR: Funkcja write w producent.cpp napotkala problem.\n");
+        _exit(1);
+    }
+
+    sprintf(info, "         Aktualny indeks bufora wyjmij: %d\n", towar->wyjmij);
+
+    if(write(STDOUT_FILENO, info, strlen(info)) == -1) {
+        perror("ERROR: Funkcja write w producent.cpp napotkala problem.\n");
+        _exit(1);
+    }
+}
+
+void wypiszKomunikat2(sem_t* adres1, sem_t* adres2) {
+    sprintf(info, "Konsument - wartosci semaforow: Producent -  %d Konsument - %d\n", wartoscSem(adres1), wartoscSem(adres2));
 
     if(write(STDOUT_FILENO, info, strlen(info)) == -1) {
         perror("ERROR: Funkcja write w producent.cpp napotkala problem.\n");
@@ -27,7 +46,6 @@ void wypiszKomunikat(int ilosc, char* towar) {
 
 int main(int argc, char* argv[]) {
 
-    // Przypisanie wartosci podanych w argumentach
     const char* nazwa_pliku = argv[1];
     const char* nazwa_sem_prod = argv[2];
     const char* nazwa_sem_kons = argv[3];
@@ -41,35 +59,30 @@ int main(int argc, char* argv[]) {
     SegmentPD* wpd = (SegmentPD *) mmapSHM(sizeof(SegmentPD), adres_SHM);
     wpd -> wyjmij = 0;
 
-    startMessage(wpd, nazwa_SHM, adres_SHM);
-
     int fd = open(nazwa_pliku, O_WRONLY | O_CREAT | O_TRUNC, 0666);
 
-    // Glowna petla
-    int wczytDane; char towar[NELE+1];
+    int wDane, koniec;
     while(true) {
-
-        // Opusc semafor Konsumenta //zwieksz o 1
-        opuscSem(adres_sem_kons);
-
-        // Umiesc towar w buforze
-        strcpy(towar, wpd->bufor[wpd->wyjmij]);
-        wczytDane = strlen(towar);
-        wypiszKomunikat(wczytDane, towar);
-
-        // Przesun pozycje wstawiania o 1 dalej
-        wpd->wyjmij = (wpd->wyjmij + 1) % NBUF;
-
-        // Podniesc semafor Producenta //zmniejsz o 20
-        for(int i = 0; i < NELE; i++) 
-            podniesSem(adres_sem_prod);
-
-        // Konsumpcja towaru
-        if(write(fd, towar, wczytDane) == -1) {
-        perror("ERROR: Funkcja write w konsument.cpp napotkala problem.\n");
-        _exit(1);
-    }
         
-    if(wczytDane < NELE) break;
+        wypiszKomunikat2(adres_sem_prod, adres_sem_kons);
+
+        podniesSem(adres_sem_kons);
+
+        if(czyKoniecDanych(wpd, &koniec)) {
+            wDane = write(fd, wpd->bufor[wpd->wyjmij], koniec);
+            wypiszKomunikat(wDane, wpd);
+            break;
+        } 
+        
+        wDane = write(fd, wpd->bufor[wpd->wyjmij], NELE);
+        wypiszKomunikat(wDane, wpd);
+
+        opuscSem(adres_sem_prod);
+
+        wpd->wyjmij = (wpd->wyjmij +1) % NBUF;
+
+        wypiszKomunikat2(adres_sem_prod, adres_sem_kons); 
+
+        sleep(1);
     }
 }

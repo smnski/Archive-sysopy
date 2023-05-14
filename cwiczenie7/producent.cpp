@@ -9,15 +9,25 @@ typedef struct {
     int wstaw, wyjmij;
 } SegmentPD;
 
-void startMessage(SegmentPD* wskaznik, const char* nazwa, int adres) {
-    std::cout << "      Producent - Wywolanie programu." << std::endl;
-    std::cout << "      Producent - Uzyskano dostep do pamieci dzielonej. ";
-    std::cout << "Nazwa: " << nazwa << ", Adres: " << adres << ", Rozmiar: " << sizeof(wskaznik) << std::endl;
+char info[100];
+void wypiszKomunikat(int ilosc, SegmentPD* towar) {
+    sprintf(info, "         Producent - wczytane dane: %.*s | ilosc: %d\n", NELE, towar->bufor[towar->wyjmij], ilosc);
+
+    if(write(STDOUT_FILENO, info, strlen(info)) == -1) {
+        perror("ERROR: Funkcja write w producent.cpp napotkala problem.\n");
+        _exit(1);
+    }
+
+    sprintf(info, "         Aktualny indeks bufora wstaw: %d\n", towar->wstaw);
+
+    if(write(STDOUT_FILENO, info, strlen(info)) == -1) {
+        perror("ERROR: Funkcja write w producent.cpp napotkala problem.\n");
+        _exit(1);
+    }
 }
 
-char info[100];
-void wypiszKomunikat(int ilosc, char* towar) {
-    sprintf(info, "Producent - wczytane dane: %.*s\n", NELE, towar);
+void wypiszKomunikat2(sem_t* adres1, sem_t* adres2) {
+    sprintf(info, "Producent - wartosci semaforow: Producent -  %d Konsument - %d\n", wartoscSem(adres1), wartoscSem(adres2));
 
     if(write(STDOUT_FILENO, info, strlen(info)) == -1) {
         perror("ERROR: Funkcja write w producent.cpp napotkala problem.\n");
@@ -27,7 +37,6 @@ void wypiszKomunikat(int ilosc, char* towar) {
 
 int main(int argc, char* argv[]) {
     
-    // Przypisanie wartosci podanych w argumentach
     const char* nazwa_pliku = argv[1];
     const char* nazwa_sem_prod = argv[2];
     const char* nazwa_sem_kons = argv[3];
@@ -41,31 +50,26 @@ int main(int argc, char* argv[]) {
     SegmentPD* wpd = (SegmentPD *) mmapSHM(sizeof(SegmentPD), adres_SHM);
     wpd -> wstaw = 0;
 
-    startMessage(wpd, nazwa_SHM, adres_SHM);
-
     int fd = open(nazwa_pliku, O_RDONLY, 0666);
 
-    // Glowna petla
-    int wczytDane; char towar[NELE+1];
-    while(true) {
+    wypiszKomunikat2(adres_sem_prod, adres_sem_kons); 
 
-        // Produkcja towaru
-        wczytDane = read(fd, towar, NELE);
-        if (wczytDane < NELE)
-            towar[wczytDane] = '\0';
-        wypiszKomunikat(wczytDane, towar);
+    int wDane;
+    while(true) {    
 
-        // Opusc semafor producenta //zwieksz o 20
-        for(int i = 0; i < NELE; i++) 
-            opuscSem(adres_sem_prod);
+        podniesSem(adres_sem_prod);
 
-        // Umiesc towar w buforze
-        strcpy(wpd->bufor[wpd->wstaw], towar);
+        wDane = read(fd, wpd->bufor[wpd->wstaw], NELE);
+        if(wDane < NELE)
+            wpd->bufor[wpd->wstaw][wDane] = '\0';
+        wypiszKomunikat(wDane, wpd);
+        wpd->wstaw = (wpd->wstaw +1) % NBUF;
 
-        // Przesun pozycje wstawiania o 1 dalej
-        wpd->wstaw = (wpd->wstaw + 1) % NBUF;
+        wypiszKomunikat2(adres_sem_prod, adres_sem_kons);
 
-        // Podniesc semafor Konsumenta //zmniejsz o 1
-        podniesSem(adres_sem_kons);
+        opuscSem(adres_sem_kons);
+
+        if(wDane < NELE) break;
+        sleep(1);
     }
 }

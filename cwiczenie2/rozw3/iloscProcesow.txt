@@ -1,4 +1,0 @@
-Przy n-krotnym wywolaniu funkcji fork-exec powstanie n procesow.
-
-Dla kazdej iteracji petli, ktora wykona sie n razy, proces macierzysty stworzy jeden proces potomny.
-Tym razem procesy potomne nie tworza swoich kopii, skad tylko n nowych procesow.
