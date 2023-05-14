@@ -8,7 +8,7 @@
 //___________________________________________________//~Deklaracje~//___________________________________________________//
 
 #define NELE 20
-#define NBUF 5
+#define NBUF 3
 
 //___________________________________________________//~Semafory~//___________________________________________________//
 
@@ -122,12 +122,13 @@ void zamknijSHM(int des) {
     }
 }
 
-void truncSHM(int des) {
+int truncSHM(int des, int len) {
 
-    int len = 200;
     if(ftruncate(des, len) == -1) {
         perror("ERROR: x - x - SemMem.h"); //update
     }
+
+return len;
 }
 
 void* mmapSHM(size_t len, int des) {
