@@ -40,9 +40,12 @@ int main(int argc, char* argv[]) {
     int wDane;
     while(true) {
         
-        podniesSem(adres_sem_prod);
-        std::cout<<"pong\n";
-        opuscSem(adres_sem_kons);
+        podniesSem(adres_sem_kons);
+        
+        std::cout << "Towar - kons: " << wpd->bufor[wpd->wyjmij] << std::endl;
+        wpd->wyjmij = (wpd->wyjmij +1) % NBUF;
+
+        opuscSem(adres_sem_prod);
 
         sleep(1);
 
