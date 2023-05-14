@@ -1,4 +1,9 @@
 .vscode
 
+*.o
 *.x
+*.
+
 **/output.txt
+
+todo.txt
