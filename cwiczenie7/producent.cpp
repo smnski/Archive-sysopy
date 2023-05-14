@@ -9,19 +9,6 @@ typedef struct {
     int wstaw, wyjmij;
 } SegmentPD;
 
-// Funkcja generujace liczbe pseudolosowa na podstawie obecnego czasu systemowego, ID procesu oraz losowej liczby.
-// Dzieki temu oba programy beda generowac rozne od siebie ilosci pobranych danych oraz czasow usypiania w kazdej iteracji.
-int losowaLiczba(int a, int b) {
-
-    // Ustawienie ziarna dla generatora.
-    std::srand(std::time(nullptr) + getpid() + std::rand());
-
-    // Wygenerowanie losowej liczby z przedziału [a, b].
-    int num = std::rand() % (b - a + 1) + a;
-  
-    return num;
-}
-
 void startMessage(SegmentPD* wskaznik, const char* nazwa, int adres) {
     std::cout << "      Producent - Wywolanie programu." << std::endl;
     std::cout << "      Producent - Uzyskano dostep do pamieci dzielonej. ";
@@ -29,9 +16,8 @@ void startMessage(SegmentPD* wskaznik, const char* nazwa, int adres) {
 }
 
 char info[100];
-void wypiszKomunikat(int ilosc, SegmentPD* wpd) {
-    std::cout << "Ilosc wczytanych danych: " << ilosc << std::endl;
-    sprintf(info, "Producent - wczytane dane: %.*s\n", NELE, wpd->bufor[wpd->wstaw]);
+void wypiszKomunikat(int ilosc, char* towar) {
+    sprintf(info, "Producent - wczytane dane: %.*s\n", NELE, towar);
 
     if(write(STDOUT_FILENO, info, strlen(info)) == -1) {
         perror("ERROR: Funkcja write w producent.cpp napotkala problem.\n");
@@ -60,21 +46,26 @@ int main(int argc, char* argv[]) {
     int fd = open(nazwa_pliku, O_RDONLY, 0666);
 
     // Glowna petla
-    int wczytDane;
-    while( (wczytDane = read(fd, wpd->bufor[wpd->wstaw], NELE)) ) {
+    int wczytDane; char towar[NELE+1];
+    while(true) {
 
-        if(wczytDane < NELE) 
-            wpd->bufor[wpd->wstaw][wczytDane] = '\0';
+        // Produkcja towaru
+        wczytDane = read(fd, towar, NELE);
+        if (wczytDane < NELE)
+            towar[wczytDane] = '\0';
+        wypiszKomunikat(wczytDane, towar);
 
-        wypiszKomunikat(wczytDane, wpd);
-        
-        for(int i = 0; i < NELE; i++) //opusc producent - zwieksz wartosc
+        // Opusc semafor producenta //zwieksz o 20
+        for(int i = 0; i < NELE; i++) 
             opuscSem(adres_sem_prod);
-        std::cout << "Wartosc semafora producenta - opuszczenie: " << wartoscSem(adres_sem_prod) << std::endl;
 
+        // Umiesc towar w buforze
+        strcpy(wpd->bufor[wpd->wstaw], towar);
+
+        // Przesun pozycje wstawiania o 1 dalej
         wpd->wstaw = (wpd->wstaw + 1) % NELE;
 
-        podniesSem(adres_sem_kons); //podnies konsument - zmniejsz wartosc
-        std::cout << "Wartosc semafora konsumenta - podniesienie: " << wartoscSem(adres_sem_kons) << std::endl;
+        // Podniesc semafor Konsumenta //zmniejsz o 1
+        podniesSem(adres_sem_kons);
     }
 }

@@ -9,19 +9,6 @@ typedef struct {
     int wstaw, wyjmij;
 } SegmentPD;
 
-// Funkcja generujace liczbe pseudolosowa na podstawie obecnego czasu systemowego, ID procesu oraz losowej liczby.
-// Dzieki temu oba programy beda generowac rozne od siebie ilosci pobranych danych oraz czasow usypiania w kazdej iteracji.
-int losowaLiczba(int a, int b) {
-
-    // Ustawienie ziarna dla generatora.
-    std::srand(std::time(nullptr) + getpid() + std::rand());
-
-    // Wygenerowanie losowej liczby z przedziału [a, b].
-    int num = std::rand() % (b - a + 1) + a;
-  
-    return num;
-}
-
 void startMessage(SegmentPD* wskaznik, const char* nazwa, int adres) {
     std::cout << "      Konsument - Wywolanie programu." << std::endl;
     std::cout << "      Konsument - Uzyskano dostep do pamieci dzielonej. ";
@@ -29,9 +16,8 @@ void startMessage(SegmentPD* wskaznik, const char* nazwa, int adres) {
 }
 
 char info[100];
-void wypiszKomunikat(int ilosc, SegmentPD* wpd) {
-    std::cout << "Ilosc wczytanych danych: " << ilosc << std::endl;
-    sprintf(info, "Producent - wczytane dane: %.*s\n", NELE, wpd->bufor[wpd->wstaw]);
+void wypiszKomunikat(int ilosc, char* towar) {
+    sprintf(info, "Konsument - wczytane dane: %.*s\n", NELE, towar);
 
     if(write(STDOUT_FILENO, info, strlen(info)) == -1) {
         perror("ERROR: Funkcja write w producent.cpp napotkala problem.\n");
@@ -60,27 +46,30 @@ int main(int argc, char* argv[]) {
     int fd = open(nazwa_pliku, O_WRONLY | O_CREAT | O_TRUNC, 0666);
 
     // Glowna petla
-    int wczytDane;
+    int wczytDane; char towar[NELE+1];
     while(true) {
 
-        opuscSem(adres_sem_kons); //opusc konsument - zwieksz wartosc
-        std::cout << "Wartosc semafora konsumenta - opuszczenie: " << wartoscSem(adres_sem_kons) << std::endl;
+        // Opusc semafor Konsumenta //zwieksz o 1
+        opuscSem(adres_sem_kons);
 
-        wczytDane = strlen(wpd->bufor[wpd->wyjmij]);
+        // Umiesc towar w buforze
+        strcpy(towar, wpd->bufor[wpd->wyjmij]);
+        wczytDane = strlen(towar);
+        wypiszKomunikat(wczytDane, towar);
 
-        wypiszKomunikat(wczytDane, wpd);
-
-        if (write(fd, wpd->bufor[wpd->wyjmij], wczytDane) == -1) {
-            perror("ERROR: Funkcja write w konsument.cpp napotkala problem.\n");
-            _exit(1);
-        }
-
+        // Przesun pozycje wstawiania o 1 dalej
         wpd->wyjmij = (wpd->wyjmij + 1) % NELE;
 
-        for(int i = 0; i < NELE; i++) //podnies producent - zmniejsz wartosc
+        // Podniesc semafor Producenta //zmniejsz o 20
+        for(int i = 0; i < NELE; i++) 
             podniesSem(adres_sem_prod);
-        std::cout << "Wartosc semafora producenta - podniesienie: " << wartoscSem(adres_sem_prod) << std::endl;
 
+        // Konsumpcja towaru
+        if(write(fd, towar, wczytDane) == -1) {
+        perror("ERROR: Funkcja write w konsument.cpp napotkala problem.\n");
+        _exit(1);
+    }
+        
     if(wczytDane < NELE) break;
     }
 }
