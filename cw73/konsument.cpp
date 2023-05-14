@@ -8,14 +8,13 @@ typedef struct {
     int wstaw, wyjmij;
 } SegmentPD;
 
-bool czyKoniecDanych(SegmentPD* wpd) {
+bool czyKoniecDanych(SegmentPD* wpd, int *koniec) {
     for(int i = 0; i < NELE; i++) {
-        std::cout<<wpd->bufor[wpd->wyjmij][i]<<" "; //debug
         if(wpd->bufor[wpd->wyjmij][i] == '%') {
+            *koniec = i;
             return true;
         }
     }
-std::cout<<std::endl; //debug
 return false;
 }
 
@@ -36,18 +35,28 @@ int main(int argc, char* argv[]) {
 
     int fd = open(nazwa_pliku, O_WRONLY | O_CREAT | O_TRUNC, 0666);
 
-    // Glowna petla
-    int wDane;
+    int wDane, koniec;
     while(true) {
         
+        std::cout << "Konsument - wartosc " << nazwa_sem_prod << ": " << wartoscSem(adres_sem_prod) << std::endl;
+        std::cout << "Konsument - wartosc " << nazwa_sem_kons << ": " << wartoscSem(adres_sem_kons) << std::endl;
+
         podniesSem(adres_sem_kons);
         
-        std::cout << "Towar - kons: " << wpd->bufor[wpd->wyjmij] << std::endl;
+        std::cout << "Towar konsumenta: " << wpd->bufor[wpd->wyjmij] << std::endl;
+
+        if(czyKoniecDanych(wpd, &koniec)) {
+            wDane = write(fd, wpd->bufor[wpd->wyjmij], koniec);
+            std::cout << "Konsument wczytal " << wDane << " bajtow danych." << std::endl;
+            break;
+        } 
+        
+        wDane = write(fd, wpd->bufor[wpd->wyjmij], NELE);
+        std::cout << "Konsument wczytal " << wDane << " bajtow danych." << std::endl;
         wpd->wyjmij = (wpd->wyjmij +1) % NBUF;
 
         opuscSem(adres_sem_prod);
 
         sleep(1);
-
     }
 }

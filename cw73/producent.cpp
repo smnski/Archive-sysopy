@@ -26,22 +26,24 @@ int main(int argc, char* argv[]) {
 
     int fd = open(nazwa_pliku, O_RDONLY, 0666);
 
-    // Glowna petla
     int wDane;
     while(true) {
 
+        std::cout << "Producent - wartosc " << nazwa_sem_prod << ": " << wartoscSem(adres_sem_prod) << std::endl;
+        std::cout << "Producent - wartosc " << nazwa_sem_kons << ": " << wartoscSem(adres_sem_kons) << std::endl;
+
         podniesSem(adres_sem_prod);
 
-        // Produkcja towaru
         wDane = read(fd, wpd->bufor[wpd->wstaw], NELE);
-        std::cout << "wDane prod: " << wDane << std::endl;
+        std::cout << "Producent wczytal " << wDane << " bajtow danych." << std::endl;
         if(wDane < NELE)
             wpd->bufor[wpd->wstaw][wDane] = '%';
-        std::cout << "Towar - prod: " << wpd->bufor[wpd->wstaw] << std::endl;
+        std::cout << "Towar producenta: " << wpd->bufor[wpd->wstaw] << std::endl;
         wpd->wstaw = (wpd->wstaw +1) % NBUF;
         
         opuscSem(adres_sem_kons);
 
+        if(wDane < NELE) break;
         sleep(1);
     }
 }
