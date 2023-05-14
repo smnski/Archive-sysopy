@@ -9,8 +9,8 @@ typedef struct {
 } SegmentPD;
 
 char info[100];
-void wypiszKomunikat(int ilosc, char* towar) {
-    sprintf(info, "Konsument - wczytane dane: %.*s\n", NELE, towar);
+void wypiszKomunikat(int ilosc, SegmentPD* towar) {
+    sprintf(info, "Konsument - wczytane dane: %.*s\n", NELE, towar->bufor[towar->wyjmij]);
 
     if(write(STDOUT_FILENO, info, strlen(info)) == -1) {
         perror("ERROR: Funkcja write w producent.cpp napotkala problem.\n");
@@ -38,7 +38,20 @@ int main(int argc, char* argv[]) {
     // Glowna petla
     int wDane;
     while(true) {
-        
-    }
 
+        opuscSem(adres_sem_kons); //zwieksz o 1
+
+        wDane = write(fd, wpd->bufor[wpd->wyjmij], NELE);
+        std::cout << "wDane kons: " << wDane << std::endl;
+
+        std::cout<<wpd->bufor[wpd->wyjmij]<<std::endl;
+
+        wypiszKomunikat(wDane, wpd);
+
+        wpd->wyjmij = (wpd->wyjmij +1) % NBUF;
+
+        podniesSem(adres_sem_prod); //zmniejsz o 1
+
+        sleep(1);
+    }
 }
