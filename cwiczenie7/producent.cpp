@@ -63,7 +63,7 @@ int main(int argc, char* argv[]) {
         strcpy(wpd->bufor[wpd->wstaw], towar);
 
         // Przesun pozycje wstawiania o 1 dalej
-        wpd->wstaw = (wpd->wstaw + 1) % NELE;
+        wpd->wstaw = (wpd->wstaw + 1) % NBUF;
 
         // Podniesc semafor Konsumenta //zmniejsz o 1
         podniesSem(adres_sem_kons);

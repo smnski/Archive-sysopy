@@ -8,16 +8,6 @@ typedef struct {
     int wstaw, wyjmij;
 } SegmentPD;
 
-char info[100];
-void wypiszKomunikat(int ilosc, SegmentPD* towar) {
-    sprintf(info, "Producent - wczytane dane: %.*s\n", NELE, towar->bufor[towar->wstaw]);
-
-    if(write(STDOUT_FILENO, info, strlen(info)) == -1) {
-        perror("ERROR: Funkcja write w producent.cpp napotkala problem.\n");
-        _exit(1);
-    }
-}
-
 int main(int argc, char* argv[]) {
     
     const char* nazwa_pliku = argv[1];
@@ -40,9 +30,10 @@ int main(int argc, char* argv[]) {
     while(true) {
 
         wDane = read(fd, wpd->bufor[wpd->wstaw], NELE);
+        std::cout << "wDane prod: " << wDane << std::endl;
         if(wDane < NELE)
             wpd->bufor[wpd->wstaw][wDane] = '\0';
-        wypiszKomunikat(wDane, wpd);
+        std::cout << "Towar - prod: " << wpd->bufor[wpd->wstaw] << std::endl;
 
         opuscSem(adres_sem_prod); //zwieksz o 1
 
@@ -50,8 +41,6 @@ int main(int argc, char* argv[]) {
 
         podniesSem(adres_sem_kons); //zmniejsz o 1
 
-        std::cout << "wDane prod: " << wDane << std::endl;
         if(wDane < NELE) break;
-        sleep(1);
     }
 }

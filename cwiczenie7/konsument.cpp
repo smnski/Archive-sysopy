@@ -58,7 +58,7 @@ int main(int argc, char* argv[]) {
         wypiszKomunikat(wczytDane, towar);
 
         // Przesun pozycje wstawiania o 1 dalej
-        wpd->wyjmij = (wpd->wyjmij + 1) % NELE;
+        wpd->wyjmij = (wpd->wyjmij + 1) % NBUF;
 
         // Podniesc semafor Producenta //zmniejsz o 20
         for(int i = 0; i < NELE; i++) 

@@ -67,7 +67,6 @@ int main(int argc, char* argv[]) {
         break;
 
         default:
-        sleep(1);
         break;
     }
 

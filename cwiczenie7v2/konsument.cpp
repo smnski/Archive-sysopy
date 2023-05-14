@@ -44,9 +44,7 @@ int main(int argc, char* argv[]) {
         wDane = write(fd, wpd->bufor[wpd->wyjmij], NELE);
         std::cout << "wDane kons: " << wDane << std::endl;
 
-        std::cout<<wpd->bufor[wpd->wyjmij]<<std::endl;
-
-        wypiszKomunikat(wDane, wpd);
+        std::cout << "Towar - kons: " << wpd->bufor[wpd->wyjmij] << std::endl;
 
         wpd->wyjmij = (wpd->wyjmij +1) % NBUF;
 
