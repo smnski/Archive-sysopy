@@ -57,19 +57,19 @@ void zamknijSem(sem_t* adres) {
     }
 }
 
-// Funkcja podnoszaca semafor, tzn. dekrementujaca jego wartosc o 1, zamykajac go do uzytku.
+// Funkcja podnoszaca semafor, tzn. inkrementujaca jego wartosc o 1, zamykajac go do uzytku.
 void podniesSem(sem_t* adres) {
 
-    if((sem_wait(adres)) == -1) {
+    if((sem_post(adres)) == -1) {
         perror("ERROR: Funkcja sem_wait - podniesSem - obsluga.h");
         _exit(1);
     }
 }
 
-// Funkcja opuszczajaca semafor, tzn. inkrementujaca jego wartosc o 1, otwierajac go do uzytku.
+// Funkcja opuszczajaca semafor, tzn. dekrementujaca jego wartosc o 1, otwierajac go do uzytku.
 void opuscSem(sem_t* adres) {
 
-    if((sem_post(adres)) == -1) {
+    if((sem_wait(adres)) == -1) {
         perror("ERROR: Funkcja sem_post - opuscSem - obsluga.h");
         _exit(1);
     }
