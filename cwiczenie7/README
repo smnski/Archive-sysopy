@@ -1,5 +1,5 @@
 ========================================================================
-Autor: Szymon Urbański,                               Krakow, 13.05.2023
+Autor: Szymon Urbański,                               Krakow, 18.05.2023
 Projekt: Pamiec dzielona                                  
 ========================================================================
 
@@ -10,17 +10,18 @@ Projekt: Pamiec dzielona
 --------------------------------------------------------------------
 
 # main:
-       Program tworzy proces potomny. Nastepnie proces macierzysty uruchamia program
-       odpowiedzialny za czesc "producenta", natomiast jego proces potomny uruchamia
-       program odpowiedzialny za czesc "konsumenta".
-
-# konsument:
-       Program pobiera dane z potoku i umieszcza je w innym pliku. Pobrane ilosci
-       danych jak i czas snu sa losowe w kazdej iteracji.
+       Program tworzy semafory i obiekt PD. Uzywa funkcji fork 2 razy i
+       wywoluje program producenta oraz konsumenta.
 
 # producent:
-       Program pobiera dane z pliku i umieszcza je w potoku. Pobrane ilosci
-       danych jak i czas snu sa losowe w kazdej iteracji.
+       Program pobiera dane z pliku i umieszcza je w buforze cyklicznym.
+       Uzywa funkcji sleep, aby zasymulowac opoznienia. 
+       Uzywa semaforow do synchronizacji.
+
+# konsument:
+       Program pobiera dane z bufora cyklicznego w  i umieszcza je w innym pliku.
+       Uzywa funkcji sleep, aby zasymulowac opoznienia. 
+       Uzywa semaforow do synchronizacji.
 
 ------------------------------------------------------------------------
 2. Jak uruchomic programy:

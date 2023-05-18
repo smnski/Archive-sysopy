@@ -123,5 +123,6 @@ int main(int argc, char* argv[]) {
         // Sleep na losowa ilosc sekund od 1 do 3.
         sleep(losowaLiczba(1, 3));
     }
+    // Porzadki na koniec.
     porzadki(fd, wpd, sizeof(SegmentPD), atoi(des_SHM));
 }
