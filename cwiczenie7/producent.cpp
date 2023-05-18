@@ -11,7 +11,7 @@ typedef struct {
 } SegmentPD;
 
 // Funkcja generujace liczbe pseudolosowa na podstawie obecnego czasu systemowego, ID procesu oraz losowej liczby.
-// Dzieki temu oba programy beda generowac rozne od czasy usypiania w kazdej iteracji.
+    // Dzieki temu oba programy beda generowac rozne od czasy usypiania w kazdej iteracji.
 int losowaLiczba(int a, int b) {
 
     // Ustawienie ziarna dla generatora.
