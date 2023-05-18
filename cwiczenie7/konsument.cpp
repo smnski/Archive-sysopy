@@ -11,7 +11,7 @@ typedef struct {
 } SegmentPD;
 
 // Funkcja generujace liczbe pseudolosowa na podstawie obecnego czasu systemowego, ID procesu oraz losowej liczby.
-// Dzieki temu oba programy beda generowac rozne od siebie ilosci pobranych danych oraz czasow usypiania w kazdej iteracji.
+// Dzieki temu oba programy beda generowac rozne od czasy usypiania w kazdej iteracji.
 int losowaLiczba(int a, int b) {
 
     // Ustawienie ziarna dla generatora.
@@ -121,7 +121,7 @@ int main(int argc, char* argv[]) {
             break;
         } 
         
-        // Konsumpcja towaru - Zapisz wczytane z bufora dane do pluku.
+        // Konsumpcja towaru - Zapisz wczytane z bufora dane do pliku.
         wDane = write(fd, wpd->bufor[wpd->wyjmij], NELE);
         wypiszKomunikat(wDane, wpd);
 
