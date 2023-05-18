@@ -103,7 +103,7 @@ int main(int argc, char* argv[]) {
         wpd->wstaw = (wpd->wstaw +1) % NBUF;
 
         wypiszKomunikat2(adres_sem_prod, adres_sem_kons);
-        //what
+
         // Podnies semafor konsumenta
         podniesSem(adres_sem_kons);
 
