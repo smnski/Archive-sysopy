@@ -51,6 +51,7 @@ void wypiszKomunikat2(sem_t* adres1, sem_t* adres2) {
     }
 }
 
+// Zamknij plik > usun odwz > zamknij shm
 void porzadki() {
 
 }
@@ -86,6 +87,9 @@ int main(int argc, char* argv[]) {
     int wDane;
     while(true) {    
 
+        // Opusc semafor producenta
+        opuscSem(adres_sem_prod);
+
         // Produkcja towaru - Zapisz wczytane dane z pliku do bufora.
         wDane = read(fd, wpd->bufor[wpd->wstaw], NELE);
 
@@ -94,9 +98,6 @@ int main(int argc, char* argv[]) {
             wpd->bufor[wpd->wstaw][wDane] = '\0';
 
         wypiszKomunikat(wDane, wpd);
-
-        // Opusc semafor producenta
-        opuscSem(adres_sem_prod);
 
         // Przesun pozycje wstawiania do bufora
         wpd->wstaw = (wpd->wstaw +1) % NBUF;

@@ -115,8 +115,6 @@ int main(int argc, char* argv[]) {
         // Podnies semafor producenta
         podniesSem(adres_sem_prod);
 
-        wypiszKomunikat2(adres_sem_prod, adres_sem_kons); 
-
         // Sleep na losowa ilosc sekund od 1 do 3.
         sleep(losowaLiczba(1, 3));
     }
