@@ -42,14 +42,14 @@ void wypiszKomunikat(int ilosc, SegmentPD* towar) {
     sprintf(info, "         Konsument - wczytane dane: %.*s | ilosc: %d\n", NELE, towar->bufor[towar->wyjmij], ilosc);
 
     if(write(STDOUT_FILENO, info, strlen(info)) == -1) {
-        perror("ERROR: Funkcja write w producent.cpp napotkala problem.\n");
+        perror("ERROR: write - wypiszKomunikat - konsument.cpp\n");
         _exit(1);
     }
 
     sprintf(info, "         Aktualny indeks bufora wyjmij: %d\n", towar->wyjmij);
 
     if(write(STDOUT_FILENO, info, strlen(info)) == -1) {
-        perror("ERROR: Funkcja write w producent.cpp napotkala problem.\n");
+        perror("ERROR: write - wypiszKomunikat - konsument.cpp\n");
         _exit(1);
     }
 }
@@ -59,9 +59,23 @@ void wypiszKomunikat2(sem_t* adres1, sem_t* adres2) {
     sprintf(info, "Konsument - wartosci semaforow: Producent -  %d Konsument - %d\n", wartoscSem(adres1), wartoscSem(adres2));
 
     if(write(STDOUT_FILENO, info, strlen(info)) == -1) {
-        perror("ERROR: Funkcja write w producent.cpp napotkala problem.\n");
+        perror("ERROR: write - wypiszKomunikat - konsument.cpp\n");
         _exit(1);
     }
+}
+
+// Funkcja zamykajaca plik, usuwajaca odwzorowanie obiektu PD i zamykajaca obiekt PD.
+void porzadki(int fd, SegmentPD* wpd, size_t len, int sd) {
+
+    if(close(fd) == -1) {
+        perror("ERROR: close - porzadki - konsument.cpp");
+        exit(1);
+    }
+
+    delMappSHM(wpd, len);
+    zamknijSHM(sd);
+
+    std::cout << "~~~ Konsument zakonczyl porzadki ~~~" << std::endl;
 }
 
 int main(int argc, char* argv[]) {
@@ -71,6 +85,7 @@ int main(int argc, char* argv[]) {
     const char* nazwa_sem_prod = argv[2];
     const char* nazwa_sem_kons = argv[3];
     const char* nazwa_SHM = argv[4];
+    const char* des_SHM = argv[5];
 
     // Otworzenie semaforow producenta i konsumenta
     sem_t* adres_sem_prod = otworzSem(nazwa_sem_prod);
@@ -118,4 +133,5 @@ int main(int argc, char* argv[]) {
         // Sleep na losowa ilosc sekund od 1 do 3.
         sleep(losowaLiczba(1, 3));
     }
+    porzadki(fd, wpd, sizeof(SegmentPD), atoi(des_SHM));
 }

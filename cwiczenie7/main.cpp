@@ -30,6 +30,8 @@ void usun_Sem_SHM() {
     usunSem(nazwa_sem_prod);
     usunSem(nazwa_sem_kons);
     usunSHM(nazwa_SHM);
+
+    std::cout << "Zakonczenie programu - usunieto semafory oraz obiekt PD." << std::endl;
 }
 
 // Funkcja usuwajaca semafory i PD, dostosowana do wymagan signal.
@@ -37,6 +39,8 @@ void usun_Sem_SHM_Sig(int signum) {
     usunSem(nazwa_sem_prod);
     usunSem(nazwa_sem_kons);
     usunSHM(nazwa_SHM);
+
+    std::cout << "Przerwano program - usunieto semafory oraz obiekt PD." << std::endl;
 }
 
 int main(int argc, char* argv[]) {
@@ -62,20 +66,20 @@ int main(int argc, char* argv[]) {
 
     // Funkcja usuwajaca semafory i PD przy wyjsciu z programu.
     if(atexit(usun_Sem_SHM) != 0) {
-        perror("ERROR: x - x - SemMem.h"); //update
+        perror("ERROR: atexit - main.cpp\n");
         exit(1);
     }
 
     // Pierwszy fork - wywolanie producenta
     switch(fork()) {
         case -1:
-            perror("ERROR: x - x - SemMem.h"); //update
+            perror("ERROR: fork - main.cpp\n");
             exit(1);
         break;
 
         case 0:
-            if(execlp("./producent.x", "producent", argv[1], nazwa_sem_prod, nazwa_sem_kons, nazwa_SHM, NULL) == -1) {
-                perror("ERROR: x - x - SemMem.h"); //update
+            if(execlp("./producent.x", "producent", argv[1], nazwa_sem_prod, nazwa_sem_kons, nazwa_SHM, std::to_string(des_SHM).c_str(), NULL) == -1) {
+                perror("ERROR: fork - main.cpp\n");
                 exit(1);
             }
         break;
@@ -88,13 +92,13 @@ int main(int argc, char* argv[]) {
     // Drugi fork - wywolanie konsumenta
     switch(fork()) {
         case -1:
-            perror("ERROR: x - x - SemMem.h"); //update
+            perror("ERROR: fork - main.cpp\n");
             exit(1);
         break;
 
         case 0:
-            if(execlp("./konsument.x", "konsument", argv[2], nazwa_sem_prod, nazwa_sem_kons, nazwa_SHM, NULL) == -1) {
-                perror("ERROR: x - x - SemMem.h"); //update
+            if(execlp("./konsument.x", "konsument", argv[2], nazwa_sem_prod, nazwa_sem_kons, nazwa_SHM, std::to_string(des_SHM).c_str(), NULL) == -1) {
+                perror("ERROR: fork - main.cpp\n");
                 exit(1);
             }
         break;
@@ -105,7 +109,7 @@ int main(int argc, char* argv[]) {
 
     // Funkcja usuwajaca semafory i PD przy zatrzymaniu programu ctrl+c.
     if(signal(SIGINT, usun_Sem_SHM_Sig) == SIG_ERR) {
-        perror("ERROR: x - x - SemMem.h"); //update
+        perror("ERROR: signal - main.cpp"); //update
         exit(1);
     }
 
@@ -113,7 +117,7 @@ int main(int argc, char* argv[]) {
     for(int i = 0; i < 2; i++) {
 
         if(waitpid(-1, NULL, 0) == -1) {
-            perror("ERROR: x - x - SemMem.h"); //update
+            perror("ERROR: waitpid - main.cpp"); //update
             exit(1);
         }
     }

@@ -95,7 +95,7 @@ int stworzSHM(const char* nazwa) {
 
     int des_SHM = shm_open(nazwa, O_RDWR | O_CREAT | O_EXCL, 0644);
     if(des_SHM == -1) {
-        perror("ERROR: shm_open - stworzSHM - SemMem.h");
+        perror("ERROR: shm_open - stworzSHM - SemMem.h\n");
     }
 
 return des_SHM;
@@ -105,7 +105,7 @@ return des_SHM;
 void usunSHM(const char* nazwa) {
 
     if(shm_unlink(nazwa) == -1) {
-        perror("ERROR: x - x - SemMem.h"); //update
+        perror("ERROR: shm_unlink - usunSHM - SemMem.h\n");
     }
 }
 
@@ -114,7 +114,7 @@ void usunSHM(const char* nazwa) {
 int otworzSHM(const char* nazwa) {
     int des_SHM = shm_open(nazwa, O_RDWR, 0644);
     if(des_SHM == -1) {
-        perror("ERROR: x - x - SemMem.h"); //update
+        perror("ERROR: shm_open - otworzSHM - SemMem.h\n");
     }
 
 return des_SHM;
@@ -124,7 +124,7 @@ return des_SHM;
 void zamknijSHM(int des) {
 
     if(close(des) == -1) {
-        perror("ERROR: x - x - SemMem.h"); //update
+        perror("ERROR: close - zamknijSHM - SemMem.h\n");
     }
 }
 
@@ -132,7 +132,7 @@ void zamknijSHM(int des) {
 int truncSHM(int des, int len) {
 
     if(ftruncate(des, len) == -1) {
-        perror("ERROR: x - x - SemMem.h"); //update
+        perror("ERROR: ftruncate - truncSHM - SemMem.h\n");
     }
 
 return len;
@@ -143,7 +143,7 @@ void* mmapSHM(size_t len, int des) {
 
     void* adres = mmap(NULL, len, PROT_READ | PROT_WRITE, MAP_SHARED, des, 0);
     if(adres == MAP_FAILED) {
-        perror("ERROR: x - x - SemMem.h"); //update
+        perror("ERROR: mmap - mmapSHM - SemMem.h\n");
     }
 
 return adres;
@@ -153,6 +153,6 @@ return adres;
 void delMappSHM(void* adres, size_t len) {
 
     if(munmap(adres, len) == -1) {
-        perror("ERROR: x - x - SemMem.h"); //update
+        perror("ERROR: munmap - delMappSHM - SemMem.h\n");
     }
 }
