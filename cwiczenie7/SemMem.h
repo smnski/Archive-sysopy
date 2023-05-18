@@ -5,10 +5,11 @@
 #include <unistd.h>
 #include <sys/mman.h>
 
-//___________________________________________________//~Deklaracje~//___________________________________________________//
+//___________________________________________________//~Definicje~//___________________________________________________//
 
-#define NELE 20
+// 
 #define NBUF 3
+#define NELE 20
 
 //___________________________________________________//~Semafory~//___________________________________________________//
 
@@ -89,6 +90,7 @@ int wartoscSem(sem_t* adres) {
 
 //___________________________________________________//~Pamiec Dzielona~//___________________________________________________//
 
+// Funkcja tworzaca obiekt pamieci dzielonej o danej nazwie.
 int stworzSHM(const char* nazwa) {
 
     int des_SHM = shm_open(nazwa, O_RDWR | O_CREAT | O_EXCL, 0644);
@@ -99,6 +101,7 @@ int stworzSHM(const char* nazwa) {
 return des_SHM;
 }
 
+// Funkcja usuwajaca obiekt pamieci dzielonej o danej nazwie.
 void usunSHM(const char* nazwa) {
 
     if(shm_unlink(nazwa) == -1) {
@@ -106,6 +109,8 @@ void usunSHM(const char* nazwa) {
     }
 }
 
+// Funkcja otwierajaca obiekt pamieci dzielonej.
+    // Permisje: Czytanie i zapisywanie
 int otworzSHM(const char* nazwa) {
     int des_SHM = shm_open(nazwa, O_RDWR, 0644);
     if(des_SHM == -1) {
@@ -115,6 +120,7 @@ int otworzSHM(const char* nazwa) {
 return des_SHM;
 }
 
+// Funkcja zamykajaca obiekt pamieci dzielonej.
 void zamknijSHM(int des) {
 
     if(close(des) == -1) {
@@ -122,6 +128,7 @@ void zamknijSHM(int des) {
     }
 }
 
+// Funkcja ustawiajaca rozmiar danego obiektu pamieci dzielonej.
 int truncSHM(int des, int len) {
 
     if(ftruncate(des, len) == -1) {
@@ -131,6 +138,7 @@ int truncSHM(int des, int len) {
 return len;
 }
 
+// Funkcja odwzorowujaca obiekt pamieci dzielonej do wirtualnej przestrzeni adresowej procesu.
 void* mmapSHM(size_t len, int des) {
 
     void* adres = mmap(NULL, len, PROT_READ | PROT_WRITE, MAP_SHARED, des, 0);
@@ -141,6 +149,7 @@ void* mmapSHM(size_t len, int des) {
 return adres;
 }
 
+// Funkcja usuwajaca odwzorowanie obiektu pamieci dzielonej z przestrzeni adresowej procesu.
 void delMappSHM(void* adres, size_t len) {
 
     if(munmap(adres, len) == -1) {

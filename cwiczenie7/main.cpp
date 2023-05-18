@@ -20,16 +20,19 @@ bool czyPoprawneDane(int argc, char *argv[]) {
 return true;
 }
 
+// Przypisanie nazw semaforow i PD do zmiennych
 const char* nazwa_sem_prod = "semaforProd";
 const char* nazwa_sem_kons = "semaforKons";
 const char* nazwa_SHM = "/SHM_Object";
 
+// Funkcja usuwajaca semafory i PD, dostosowana do wymagan atexit.
 void usun_Sem_SHM() {
     usunSem(nazwa_sem_prod);
     usunSem(nazwa_sem_kons);
     usunSHM(nazwa_SHM);
 }
 
+// Funkcja usuwajaca semafory i PD, dostosowana do wymagan signal.
 void usun_Sem_SHM_Sig(int signum) {
     usunSem(nazwa_sem_prod);
     usunSem(nazwa_sem_kons);
@@ -40,8 +43,9 @@ int main(int argc, char* argv[]) {
     //Sprawdzenie, czy program zostal uruchomiony z poprawnymi argumentami.
     if(!czyPoprawneDane(argc, argv)) exit(1);
 
+    // Utworzenie semaforow producenta i konsumenta.
     std::cout << "____________________________________________________________________" << std::endl;
-    sem_t* adres_sem_prod = stworzSem(nazwa_sem_prod, 1);
+    sem_t* adres_sem_prod = stworzSem(nazwa_sem_prod, NBUF);
     sem_t* adres_sem_kons = stworzSem(nazwa_sem_kons, 0);
 
     int wartosc_sem_prod = wartoscSem(adres_sem_prod);
@@ -50,12 +54,19 @@ int main(int argc, char* argv[]) {
     std::cout << "Utworzono semafor producenta o adresie: " << adres_sem_prod << ", wartosci: " << wartosc_sem_prod << std::endl;
     std::cout << "Utworzono semafor konsumenta o adresie: " << adres_sem_kons << ", wartosci: " << wartosc_sem_kons << std::endl;
 
+    // Utworzenie obiektu pamieci dzielonej.
     int des_SHM = stworzSHM(nazwa_SHM);
     int dl_SHM = truncSHM(des_SHM, 200);
     std::cout << "Utworzono nowy obiekt pamieci dzielonej o deskryptorze: " << des_SHM << ", rozmiarze: " << dl_SHM << std::endl;
     std::cout << "____________________________________________________________________" << std::endl;
 
-    // Pierwszy fork
+    // Funkcja usuwajaca semafory i PD przy wyjsciu z programu.
+    if(atexit(usun_Sem_SHM) != 0) {
+        perror("ERROR: x - x - SemMem.h"); //update
+        exit(1);
+    }
+
+    // Pierwszy fork - wywolanie producenta
     switch(fork()) {
         case -1:
             perror("ERROR: x - x - SemMem.h"); //update
@@ -74,7 +85,7 @@ int main(int argc, char* argv[]) {
         break;
     }
 
-    // Drugi fork
+    // Drugi fork - wywolanie konsumenta
     switch(fork()) {
         case -1:
             perror("ERROR: x - x - SemMem.h"); //update
@@ -92,21 +103,18 @@ int main(int argc, char* argv[]) {
         break;
     }
 
+    // Funkcja usuwajaca semafory i PD przy zatrzymaniu programu ctrl+c.
     if(signal(SIGINT, usun_Sem_SHM_Sig) == SIG_ERR) {
         perror("ERROR: x - x - SemMem.h"); //update
         exit(1);
     }
 
+    // Oczekiwanie na zakonczenie dzialania producenta i konsumenta.
     for(int i = 0; i < 2; i++) {
 
         if(waitpid(-1, NULL, 0) == -1) {
             perror("ERROR: x - x - SemMem.h"); //update
             exit(1);
         }
-    }
-
-    if(atexit(usun_Sem_SHM) != 0) {
-        perror("ERROR: x - x - SemMem.h"); //update
-        exit(1);
     }
 }
