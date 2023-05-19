@@ -1,0 +1,52 @@
+#define N ? // Rozmiar bufora
+
+typdef struct { ... } Towar; // Definicja typu dla jednostek towaru
+Towar bufor[N]; // Bufor mogacy pomiescic N jednostek towaru
+int wstaw = 0, wyjmij = 0; // Pozycje wstawiania oraz wyjmowania towaru
+                                // z bufora (mozna umiescic w pamieci dzielonej)
+
+semaphore PROD = N; // Semafor do wstrzymywania Producenta
+semaphore KONS = 0; // Semafor do wstrzymywania Konsumenta
+
+semaphore BIN_PROD = 1; // Semafor do synchronizacji Producentów
+semaphore BIN_KONS = 1; // Semafor do synchronizacji Konsumentów
+
+// Proces Producent
+// ----------------
+Towar towarProd;
+while (1) {
+    // Produkcja towaru
+
+    // Opusc semafor synchronizujacy producentow,
+        // aby nie nadpisali porcji towaru umieszczonej przez poprzedniego producenta
+    P(BIN_PROD);
+
+    P(PROD); // Opusc semafor Producenta
+    bufor[wstaw] = towarProd; // Umiesc towar w buforze
+    wstaw = (wstaw + 1) % N; // Przesun pozycje wstawiania o 1 dalej
+    V(KONS); // Podniesc semafor Konsumenta
+
+    // Podnies semafor synchronizujacy producentow,
+        // towar zostal umieszczony w buforze, a pozycja wstawiania przesunieta dalej
+    V(BIN_PROD);
+}
+
+// Proces Konsument
+// ----------------
+Towar towarKons;
+while (1) {
+    // Opusc semafor synchronizujacy konsumentow,
+        // aby ta sama porcja towaru nie zostala uzyta kilkukrotnie
+    P(BIN_KONS);
+
+    P(KONS); // Opusc semafor Konsumenta
+    towarKons = bufor[wyjmij]; // Umiesc towar w buforze
+    wyjmij = (wyjmij + 1) % N; // Przesun pozycje wstawiania o 1 dalej
+    V(PROD); // Podniesc semafor Producenta
+
+    // Podnies semafor synchronizujacy konsumentow,
+        // towar zostal wyjety z bufora, a pozycja wyjmowania przesunieta dalej
+    V(BIN_KONS);
+    
+    // Konsumpcja towaru
+}
