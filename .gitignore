@@ -3,6 +3,7 @@
 *.o
 *.x
 *.
+*.out
 
 **/output.txt
 

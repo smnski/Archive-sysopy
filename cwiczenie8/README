@@ -1,0 +1,57 @@
+========================================================================
+Autor: Szymon Urbański,                              Krakow, xx.05.2023
+Projekt: Kolejki komunikatow                                 
+========================================================================
+
+# Zawartosc:
+============
+--------------------------------------------------------------------
+1. Programy potrzebne do rozwiazania zadania:
+--------------------------------------------------------------------
+
+# main:
+       Program tworzy semafory i obiekt PD. Uzywa funkcji fork 2 razy i
+       wywoluje program producenta oraz konsumenta.
+
+# producent:
+       Program pobiera dane z pliku i umieszcza je w buforze cyklicznym.
+       Uzywa funkcji sleep, aby zasymulowac opoznienia. 
+       Uzywa semaforow do synchronizacji.
+
+# konsument:
+       Program pobiera dane z bufora cyklicznego w  i umieszcza je w innym pliku.
+       Uzywa funkcji sleep, aby zasymulowac opoznienia. 
+       Uzywa semaforow do synchronizacji.
+
+------------------------------------------------------------------------
+2. Jak uruchomic programy:
+------------------------------------------------------------------------
+
+Katalog zawiera program Makefile do kompilacji, linkowania
+i uruchamiania powyzszych programow, a takze czyszczenia katalogu 
+i jego archiwizacji.
+
+-> Aby skompilowac wszystkie programy bez ich uruchamiania, nalezy wykonac:
+       make all
+
+-> Gdy programy sa juz skompilowane, aby uruchomic program z zadania, nalezy wykonac:
+       make run W="{plik_z_danymi}" Z="{plik_z_wynikiem}"
+*Gdzie za {plik_z_danymi} podajemy nazwe pliku zawierajacego dane do przeslania.
+*A za {plik_z_wynikiem} podajemy nazwe pliku, w ktorym mamy umiescic wynik programu.
+
+***Przykladowe uruchomienie programu:
+    make run W="daneProd.txt" Z="output.txt"
+
+-> Aby porownac pliki po zakonczeniu dzialania programu nalezy wykonac:
+    make compare W="{plik_z_danymi}" Z="{plik_z_wynikiem}"
+***Przykladowe porownanie plikow:
+    make compare W="daneProd.txt" Z="output.txt"
+
+-> Aby wyczyscic zawartosc katalogu (usunac zbedne pliki), nalezy wykonac:
+       make clean
+
+-> W celu archiwizacji oraz kompresji katalogu, nalezy wykonac:
+       make tar
+
+------------------------------------------------------------------------
+------------------------------------------------------------------------
