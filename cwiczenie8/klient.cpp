@@ -1,6 +1,6 @@
 //Autor: Szymon Urbanski
 #include <iostream>
-
+#include <unistd.h>
 #include "kolLib.h"
 
 mqd_t des_serwera, des_klienta;
@@ -43,8 +43,9 @@ int main() {
 
     char wiadomosc_wyslij[size_MQ];
     char wiadomosc_odbierz[size_MQ];
+    char zapytanie[30]; // dzialanie przed konwersja na format do wyslania do serwera
 
-    pid_t wlasnieID;
+    pid_t wlasneID = getpid();
 
     struct mq_attr atrybuty;
 
@@ -56,5 +57,20 @@ int main() {
 };
     // Koniec deklaracji
 
-    
+    sprintf(nazwaMQ_klient, "/%d", wlasneID);
+
+    stworzMQ(nazwaMQ_klient, &creation_attr);
+    des_klienta = otworzMQ_Read(nazwaMQ_klient);
+
+    atexit(zamknijMQ_Klient_Atexit);
+
+    wypiszAtrybuty(des_klienta, &atrybuty);
+
+    //des_serwera = otworzMQ_Write(nazwaMQ);
+
+    while(true) {
+
+        break;
+
+    }
 }
