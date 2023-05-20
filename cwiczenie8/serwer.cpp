@@ -5,30 +5,20 @@
 
 mqd_t des_serwera, des_klienta;
 
-void usunSerwerAtexit() {
+void zamknijMQ_Serwer_Atexit() {
 
     zamknijMQ(des_serwera);
-    usunMQ(nazwa_MQ);
+    usunMQ(nazwaMQ);
 
-    std::cout << "Zakonczenie programu - usuniecie serwera." << std::endl;
+    std::cout << "Zakonczenie programu - zamkniecie i usuniecie kolejki przez serwer." << std::endl;
 }
-
-/*
-void usunSerwerSignal(int signum) {
-
-    zamknijMQ(des_serwera);
-    usunMQ(nazwa_MQ);
-    
-    std::cout << "Przerwanie programu - usuniecie serwera." << std::endl;
-}
-*/
 
 void wypiszAtrybuty(mqd_t des, mq_attr* attr) {
 
     getAttr(des, attr);
 
     std::cout << "Utworzono serwer o deskryptorze: " << des << ", atrybutach kolejki: " << std::endl;
-    std::cout << "  Nazwa: " << nazwa_MQ << std::endl;
+    std::cout << "  Nazwa: " << nazwaMQ << std::endl;
     std::cout << "  Flagi: " << attr->mq_flags << std::endl;
     std::cout << "  Max. ilosc wiadomosci: " << attr->mq_maxmsg << std::endl;
     std::cout << "  Max. rozmiar wiadomosci: " << attr->mq_msgsize << std::endl;
@@ -53,10 +43,10 @@ int main() {
     .mq_curmsgs = 0
 };
 
-    stworzMQ(nazwa_MQ, &atrybuty);
-    des_serwera = otworzMQ_Read(nazwa_MQ);
+    stworzMQ(nazwaMQ, &atrybuty);
+    des_serwera = otworzMQ_Read(nazwaMQ);
 
-    atexit(usunSerwerAtexit);
+    atexit(zamknijMQ_Serwer_Atexit);
 
     wypiszAtrybuty(des_serwera, &atrybuty);
 

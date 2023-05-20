@@ -2,22 +2,10 @@
 #include <mqueue.h>
 #include <ctime>
 
-//___________________________________________________//~Wspolne~//___________________________________________________//
+//___________________________________________________//~Definicje~//___________________________________________________//
 
-#define nazwa_MQ "/kolejka"
+#define nazwaMQ "/kolejka"
 #define size_MQ 150
-
-// Funkcja generujace liczbe pseudolosowa na podstawie obecnego czasu systemowego oraz losowej liczby.
-int losowaLiczba(int a, int b) {
-
-    // Ustawienie ziarna dla generatora.
-    std::srand(std::time(nullptr) + std::rand());
-
-    // Wygenerowanie losowej liczby z przedziału [a, b].
-    int num = std::rand() % (b - a + 1) + a;
-  
-    return num;
-}
 
 //___________________________________________________//~Biblioteka~//___________________________________________________//
 
