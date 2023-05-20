@@ -66,20 +66,20 @@ int main(int argc, char* argv[]) {
 
     // Funkcja usuwajaca semafory i PD przy wyjsciu z programu.
     if(atexit(usun_Sem_SHM) != 0) {
-        perror("ERROR: atexit - main.cpp\n");
+        perror("ERROR: atexit - main - main.cpp\n");
         exit(1);
     }
 
     // Pierwszy fork - wywolanie producenta
     switch(fork()) {
         case -1:
-            perror("ERROR: fork - main.cpp\n");
+            perror("ERROR: fork - main - main.cpp\n");
             exit(1);
         break;
 
         case 0:
             if(execlp("./producent.x", "producent", argv[1], nazwa_sem_prod, nazwa_sem_kons, nazwa_SHM, std::to_string(des_SHM).c_str(), NULL) == -1) {
-                perror("ERROR: fork - main.cpp\n");
+                perror("ERROR: fork - main - main.cpp\n");
                 exit(1);
             }
         break;
@@ -92,13 +92,13 @@ int main(int argc, char* argv[]) {
     // Drugi fork - wywolanie konsumenta
     switch(fork()) {
         case -1:
-            perror("ERROR: fork - main.cpp\n");
+            perror("ERROR: fork - main - main.cpp\n");
             exit(1);
         break;
 
         case 0:
             if(execlp("./konsument.x", "konsument", argv[2], nazwa_sem_prod, nazwa_sem_kons, nazwa_SHM, std::to_string(des_SHM).c_str(), NULL) == -1) {
-                perror("ERROR: fork - main.cpp\n");
+                perror("ERROR: fork - main - main.cpp\n");
                 exit(1);
             }
         break;
@@ -109,7 +109,7 @@ int main(int argc, char* argv[]) {
 
     // Funkcja usuwajaca semafory i PD przy zatrzymaniu programu ctrl+c.
     if(signal(SIGINT, usun_Sem_SHM_Sig) == SIG_ERR) {
-        perror("ERROR: signal - main.cpp"); //update
+        perror("ERROR: signal - main - main.cpp"); //update
         exit(1);
     }
 
@@ -117,7 +117,7 @@ int main(int argc, char* argv[]) {
     for(int i = 0; i < 2; i++) {
 
         if(waitpid(-1, NULL, 0) == -1) {
-            perror("ERROR: waitpid - main.cpp"); //update
+            perror("ERROR: waitpid - main - main.cpp"); //update
             exit(1);
         }
     }
