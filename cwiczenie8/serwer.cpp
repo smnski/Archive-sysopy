@@ -27,6 +27,7 @@ void wypiszAtrybuty(mqd_t des, mq_attr* attr) {
 int main() {
 
     // Deklaracje zmiennych
+    
     char wiadomosc_wyslij[size_MQ];
     char wiadomosc_odbierz[size_MQ];
     char dzialanie;
@@ -42,6 +43,7 @@ int main() {
     .mq_msgsize = size_MQ,
     .mq_curmsgs = 0
 };
+    // Koniec deklaracji
 
     stworzMQ(nazwaMQ, &atrybuty);
     des_serwera = otworzMQ_Read(nazwaMQ);
