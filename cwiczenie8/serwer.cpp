@@ -26,6 +26,11 @@ void wypiszAtrybuty(mqd_t des, mq_attr* attr) {
 
 int main() {
 
+    if(mqd_t mq = mq_open(nazwaMQ, O_RDONLY); mq != -1) {
+        mq_close(mq);
+        usunMQ(nazwaMQ);
+    }
+
     // Deklaracje zmiennych
 
     char wiadomosc_wyslij[sizeMQ];
@@ -61,7 +66,7 @@ int main() {
 
         odbierzMQ(des_serwera, wiadomosc_odbierz, atrybuty.mq_msgsize);
 
-        std::cout << "Serwer otrzymal zapytanie." << std::endl;
+        std::cout << "Serwer otrzymal zapytanie: " << std::endl;
 
         sscanf(wiadomosc_odbierz, "%d %d%c%d", &klientID, &num1, &dzialanie, &num2);
         sprintf(nazwaMQ_klient, "/%d", klientID);

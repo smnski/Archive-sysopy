@@ -9,7 +9,6 @@ char nazwaMQ_klient[15];
 void zamknijMQ_Klient_Atexit() {
 
     zamknijMQ(des_klienta);
-    usunMQ(nazwaMQ_klient);
 
     std::cout << "Zakonczenie programu - zamkniecie kolejki przez klienta." << std::endl;
 }

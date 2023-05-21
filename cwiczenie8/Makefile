@@ -14,4 +14,5 @@ $(CPP2): $(CPP2).cpp $(HED1).h
 
 run: all
 	xterm -hold -title $(CPP2) -e ./$(CPP2) &
-	xterm -hold -title $(CPP1) -e ./$(CPP1) &
+	xterm -hold -title $(CPP1)1 -e ./$(CPP1) &
+	xterm -hold -title $(CPP1)2 -e ./$(CPP1) &
