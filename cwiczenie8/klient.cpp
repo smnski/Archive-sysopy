@@ -5,7 +5,7 @@
 
 mqd_t des_serwera, des_klienta;
 
-// Funkcja zamykajaca i usuwajaca kolejke komunikatow klienta na wyjsciu z programu.
+// Funkcja zamykajaca kolejke komunikatow klienta i serwera oraz usuwajaca kolejke klienta na wyjsciu.
 char nazwaMQ_klient[15];
 void zamknijMQ_Klient_Atexit() {
 

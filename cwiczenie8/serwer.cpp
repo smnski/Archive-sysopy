@@ -5,6 +5,7 @@
 
 mqd_t des_serwera, des_klienta;
 
+// Funkcja zamykajaca i usuwajaca kolejke komunikatow serwera.
 void zamknijMQ_Serwer() {
 
     zamknijMQ(des_serwera);
@@ -13,7 +14,8 @@ void zamknijMQ_Serwer() {
     std::cout << "Zakonczenie programu serwera." << std::endl;
 }
 
-void exiting(int signum) {
+// Funkcja korzystajaca z powyzszej funkcji na wyjsciu programu, gdy uzytkownik uzyje ctrl+c.
+void zamknijMQ_Serwer_Signal(int signum) {
 
     atexit(zamknijMQ_Serwer);
     exit(EXIT_SUCCESS);
@@ -59,7 +61,7 @@ int main() {
     des_serwera = otworzMQ_Read(nazwaMQ);
 
     // Obsluga zakonczenia dzialania procesu za pomoca ctrl+c dzieki signal oraz atexit.
-    if(signal(SIGINT, exiting) == SIG_ERR) {
+    if(signal(SIGINT, zamknijMQ_Serwer_Signal) == SIG_ERR) {
         perror("ERROR: signal - main - serwer.cpp");
         exit(1);
     }
@@ -80,6 +82,7 @@ int main() {
 
         // Odebranie z zapytania ID klienta, liczb oraz dzialania na nich
         sscanf(wiadomosc_odbierz, "%d %d%c%d", &klientID, &num1, &dzialanie, &num2);
+        
         // Odpowiednie sformatowanie nazwy kolejki komunikatow klienta
         sprintf(nazwaMQ_klient, "/%d", klientID);
 
