@@ -26,8 +26,6 @@ void wypiszAtrybuty(mqd_t des, mq_attr* attr) {
 
 int main() {
 
-    usunMQ(nazwaMQ);
-
     // Deklaracje zmiennych
 
     char wiadomosc_wyslij[sizeMQ];

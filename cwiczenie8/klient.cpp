@@ -47,7 +47,7 @@ int main() {
 
     sprintf(nazwaMQ_klient, "/%d", wlasneID);
 
-    des_klienta = stworzMQ(nazwaMQ_klient, &creation_attr);
+    stworzMQ(nazwaMQ_klient, &creation_attr);
     des_klienta = otworzMQ_Read(nazwaMQ_klient);
 
     atexit(zamknijMQ_Klient_Atexit);
