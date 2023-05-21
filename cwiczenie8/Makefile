@@ -37,10 +37,9 @@ run: all
 
 ##### PORZADKI #####
 .PHONY: clean tar
-EXECS = $(EXEC1) $(EXEC2) $(EXEC3)
 
 clean:
-	rm -f *.o *~ *.x $(EXECS)
+	rm -f *.o *~ *.x
 
 ##### ARCHIWIZACJA I KOMPRESJA #####
 tar: clean
