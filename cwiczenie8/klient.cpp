@@ -25,24 +25,12 @@ void wypiszAtrybuty(mqd_t des, mq_attr* attr) {
     std::cout << "  Max. rozmiar wiadomosci: " << attr->mq_msgsize << std::endl;
 }
 
-// Funkcja generujace liczbe pseudolosowa na podstawie obecnego czasu systemowego oraz losowej liczby.
-int losowaLiczba(int a, int b) {
-
-    // Ustawienie ziarna dla generatora.
-    std::srand(std::time(nullptr) + std::rand());
-
-    // Wygenerowanie losowej liczby z przedziału [a, b].
-    int num = std::rand() % (b - a + 1) + a;
-  
-    return num;
-}
-
 int main() {
 
     // Deklaracje zmiennych
 
-    char wiadomosc_wyslij[size_MQ];
-    char wiadomosc_odbierz[size_MQ];
+    char wiadomosc_wyslij[sizeMQ];
+    char wiadomosc_odbierz[sizeMQ];
     char zapytanie[30]; // dzialanie przed konwersja na format do wyslania do serwera
 
     pid_t wlasneID = getpid();
@@ -52,7 +40,7 @@ int main() {
     struct mq_attr creation_attr = {
     .mq_flags = 0,
     .mq_maxmsg = 15,
-    .mq_msgsize = size_MQ,
+    .mq_msgsize = sizeMQ,
     .mq_curmsgs = 0
 };
     // Koniec deklaracji
@@ -68,9 +56,19 @@ int main() {
 
     //des_serwera = otworzMQ_Write(nazwaMQ);
 
-    while(true) {
+    while(fgets(zapytanie, sizeof(zapytanie), stdin) != NULL) {
 
-        break;
+        std::cout << "Wpisz swoje zapytanie: " << std::endl;
 
+        //sleep(losowaLiczba(1,2));
+
+        sprintf(wiadomosc_wyslij, "%d %s", wlasneID, zapytanie);
+        wyslijMQ(des_serwera, wiadomosc_wyslij, sizeMQ, 0);
+
+        std::cout << "Wyslano zapytanie do serwera." << std::endl;
+
+        odbierzMQ(des_klienta, wiadomosc_odbierz, atrybuty.mq_msgsize);
+
+        std::cout << "Odebrano odpowiedz od serwera." << std::endl;
     }
 }
