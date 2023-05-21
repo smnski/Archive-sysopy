@@ -9,8 +9,11 @@ char nazwaMQ_klient[15];
 void zamknijMQ_Klient_Atexit() {
 
     zamknijMQ(des_klienta);
+    zamknijMQ(des_serwera);
+    usunMQ(nazwaMQ_klient);
 
-    std::cout << "Zakonczenie programu - zamkniecie kolejki przez klienta." << std::endl;
+    std::cout << "Zakonczenie programu klienta." << std::endl;
+    exit(EXIT_SUCCESS);
 }
 
 void wypiszAtrybuty(mqd_t des, mq_attr* attr) {
@@ -22,6 +25,7 @@ void wypiszAtrybuty(mqd_t des, mq_attr* attr) {
     std::cout << "  Flagi: " << attr->mq_flags << std::endl;
     std::cout << "  Max. ilosc wiadomosci: " << attr->mq_maxmsg << std::endl;
     std::cout << "  Max. rozmiar wiadomosci: " << attr->mq_msgsize << std::endl;
+    std::cout << "_______________________________________" << std::endl;
 }
 
 int main() {
@@ -53,6 +57,8 @@ int main() {
 
     wypiszAtrybuty(des_klienta, &atrybuty);
 
+
+    sleep(1);
     des_serwera = otworzMQ_Write(nazwaMQ);
 
     std::cout << "Wpisz swoje zapytanie: " << std::endl;
@@ -68,7 +74,7 @@ int main() {
 
         odbierzMQ(des_klienta, wiadomosc_odbierz, atrybuty.mq_msgsize);
 
-        std::cout << "Odebrano odpowiedz od serwera: " << wiadomosc_odbierz << std::endl;
+        std::cout << "Odebrano odpowiedz od serwera: " << wiadomosc_odbierz << std::endl << std::endl;
 
         std::cout << "Wpisz swoje zapytanie: " << std::endl;
     }

@@ -8,9 +8,16 @@ mqd_t des_serwera, des_klienta;
 void zamknijMQ_Serwer_Atexit() {
 
     zamknijMQ(des_serwera);
+    zamknijMQ(des_klienta);
     usunMQ(nazwaMQ);
 
-    std::cout << "Zakonczenie programu - zamkniecie i usuniecie kolejki przez serwer." << std::endl;
+    std::cout << "Zakonczenie programu serwera." << std::endl;
+    exit(EXIT_SUCCESS);
+}
+
+void zamknijMQ_Serwer_Signal(int signum) {
+
+    zamknijMQ_Serwer_Atexit();
 }
 
 void wypiszAtrybuty(mqd_t des, mq_attr* attr) {
@@ -22,6 +29,7 @@ void wypiszAtrybuty(mqd_t des, mq_attr* attr) {
     std::cout << "  Flagi: " << attr->mq_flags << std::endl;
     std::cout << "  Max. ilosc wiadomosci: " << attr->mq_maxmsg << std::endl;
     std::cout << "  Max. rozmiar wiadomosci: " << attr->mq_msgsize << std::endl;
+    std::cout << "_______________________________________" << std::endl;
 }
 
 int main() {
@@ -58,6 +66,11 @@ int main() {
 
     wypiszAtrybuty(des_serwera, &atrybuty);
 
+    if(signal(SIGINT, zamknijMQ_Serwer_Signal) == SIG_ERR) {
+        perror("ERROR: signal - main - serwer.cpp");
+        exit(1);
+    }
+
     while(!std::cin.eof()) {
 
         std::cout << "Serwer oczekuje na zapytanie." << std::endl;
@@ -66,7 +79,7 @@ int main() {
 
         odbierzMQ(des_serwera, wiadomosc_odbierz, atrybuty.mq_msgsize);
 
-        std::cout << "Serwer otrzymal zapytanie: " << std::endl;
+        std::cout << "Serwer otrzymal zapytanie: " << wiadomosc_odbierz;
 
         sscanf(wiadomosc_odbierz, "%d %d%c%d", &klientID, &num1, &dzialanie, &num2);
         sprintf(nazwaMQ_klient, "/%d", klientID);
@@ -92,9 +105,8 @@ int main() {
                 sprintf(wiadomosc_wyslij, "ERROR: Serwer nie obsluguje takiego dzialania.");
             break;    
         }
-
-        std::cout << "Serwer odpowiada na zapytanie." << std::endl;
-
+    
+        std::cout << "Serwer odsyla wynik: " << wiadomosc_wyslij << std::endl << std::endl;
         des_klienta = otworzMQ_Write(nazwaMQ_klient);
         wyslijMQ(des_klienta, wiadomosc_wyslij, sizeMQ, 0);
         zamknijMQ(des_klienta);
