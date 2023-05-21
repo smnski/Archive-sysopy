@@ -5,6 +5,7 @@
 
 mqd_t des_serwera, des_klienta;
 
+// Funkcja zamykajaca i usuwajaca kolejke komunikatow klienta na wyjsciu z programu.
 char nazwaMQ_klient[15];
 void zamknijMQ_Klient_Atexit() {
 
@@ -16,6 +17,7 @@ void zamknijMQ_Klient_Atexit() {
     exit(EXIT_SUCCESS);
 }
 
+// Funkcja wypisujaca atrybuty danej kolejki komunikatow
 void wypiszAtrybuty(mqd_t des, mq_attr* attr) {
 
     getAttr(des, attr);
@@ -34,7 +36,7 @@ int main() {
 
     char wiadomosc_wyslij[sizeMQ];
     char wiadomosc_odbierz[sizeMQ];
-    char zapytanie[30]; // dzialanie przed konwersja na format do wyslania do serwera
+    char zapytanie[30];
 
     pid_t wlasneID = getpid();
 
@@ -48,8 +50,10 @@ int main() {
 };
     // Koniec deklaracji
 
+    // Przypisanie nazwy do kolejki komunikatow klienta na podstawie jego ID
     sprintf(nazwaMQ_klient, "/%d", wlasneID);
 
+    // Stworzenie kolejki komunikatow klienta i otworzenie jej w trybie do czytania
     stworzMQ(nazwaMQ_klient, &creation_attr);
     des_klienta = otworzMQ_Read(nazwaMQ_klient);
 
@@ -57,21 +61,24 @@ int main() {
 
     wypiszAtrybuty(des_klienta, &atrybuty);
 
-
+    // Otworzenie kolejki komunikatow serwera po jej stworzeniu w trybie do czytania
     sleep(1);
     des_serwera = otworzMQ_Write(nazwaMQ);
 
     std::cout << "Wpisz swoje zapytanie: " << std::endl;
 
+    // Dopoki podajemy zapytania dla klienta (nie zakonczymy jego dzialania ctrl+d)
     while(fgets(zapytanie, sizeof(zapytanie), stdin) != NULL) {
 
         sleep(losowaLiczba(1,5));
 
+        // Sformatowanie i wyslanie zapytania przez kolejke komunikatow do serwera
         sprintf(wiadomosc_wyslij, "%d %s", wlasneID, zapytanie);
         wyslijMQ(des_serwera, wiadomosc_wyslij, sizeMQ, 0);
 
         std::cout << "Wyslano zapytanie do serwera." << std::endl;
 
+        // Odebranie odpowiedzi na zapytanie od serwera
         odbierzMQ(des_klienta, wiadomosc_odbierz, atrybuty.mq_msgsize);
 
         std::cout << "Odebrano odpowiedz od serwera: " << wiadomosc_odbierz << std::endl << std::endl;

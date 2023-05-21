@@ -5,21 +5,21 @@
 
 mqd_t des_serwera, des_klienta;
 
-void zamknijMQ_Serwer_Atexit() {
+void zamknijMQ_Serwer() {
 
     zamknijMQ(des_serwera);
-    zamknijMQ(des_klienta);
     usunMQ(nazwaMQ);
 
     std::cout << "Zakonczenie programu serwera." << std::endl;
+}
+
+void exiting(int signum) {
+
+    atexit(zamknijMQ_Serwer);
     exit(EXIT_SUCCESS);
 }
 
-void zamknijMQ_Serwer_Signal(int signum) {
-
-    zamknijMQ_Serwer_Atexit();
-}
-
+// Funkcja wypisujaca atrybuty danej kolejki komunikatow
 void wypiszAtrybuty(mqd_t des, mq_attr* attr) {
 
     getAttr(des, attr);
@@ -32,12 +32,7 @@ void wypiszAtrybuty(mqd_t des, mq_attr* attr) {
     std::cout << "_______________________________________" << std::endl;
 }
 
-int main() {
-
-    if(mqd_t mq = mq_open(nazwaMQ, O_RDONLY); mq != -1) {
-        mq_close(mq);
-        usunMQ(nazwaMQ);
-    }
+int main() {  
 
     // Deklaracje zmiennych
 
@@ -59,31 +54,36 @@ int main() {
 };
     // Koniec deklaracji
 
+    // Stworzenie kolejki komunikatow serwera i otworzenie jej w trybie do czytania
     stworzMQ(nazwaMQ, &creation_attr);
     des_serwera = otworzMQ_Read(nazwaMQ);
 
-    atexit(zamknijMQ_Serwer_Atexit);
-
-    wypiszAtrybuty(des_serwera, &atrybuty);
-
-    if(signal(SIGINT, zamknijMQ_Serwer_Signal) == SIG_ERR) {
+    // Obsluga zakonczenia dzialania procesu za pomoca ctrl+c dzieki signal oraz atexit.
+    if(signal(SIGINT, exiting) == SIG_ERR) {
         perror("ERROR: signal - main - serwer.cpp");
         exit(1);
     }
 
-    while(!std::cin.eof()) {
+    wypiszAtrybuty(des_serwera, &atrybuty);
+
+    // Petla nieskonczona - proces demon
+    while(true) {
 
         std::cout << "Serwer oczekuje na zapytanie." << std::endl;
 
         sleep(losowaLiczba(1,5));
 
+        // Odebranie zapytania wyslanego przez lkienta
         odbierzMQ(des_serwera, wiadomosc_odbierz, atrybuty.mq_msgsize);
 
         std::cout << "Serwer otrzymal zapytanie: " << wiadomosc_odbierz;
 
+        // Odebranie z zapytania ID klienta, liczb oraz dzialania na nich
         sscanf(wiadomosc_odbierz, "%d %d%c%d", &klientID, &num1, &dzialanie, &num2);
+        // Odpowiednie sformatowanie nazwy kolejki komunikatow klienta
         sprintf(nazwaMQ_klient, "/%d", klientID);
 
+        // Wykonanie pozadanego dzialania
         switch(dzialanie) {
             case '+':
                 sprintf(wiadomosc_wyslij, "%d", num1 + num2);
@@ -105,10 +105,16 @@ int main() {
                 sprintf(wiadomosc_wyslij, "ERROR: Serwer nie obsluguje takiego dzialania.");
             break;    
         }
-    
+
         std::cout << "Serwer odsyla wynik: " << wiadomosc_wyslij << std::endl << std::endl;
+
+        // Otworzenie kolejki komunikatow klienta w trybie do czytania
         des_klienta = otworzMQ_Write(nazwaMQ_klient);
+
+        // Odeslanie wyniku zapytania do klienta
         wyslijMQ(des_klienta, wiadomosc_wyslij, sizeMQ, 0);
+
+        // Zamkniecie kolejki komunikatow klienta
         zamknijMQ(des_klienta);
     }
 }

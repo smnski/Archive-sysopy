@@ -4,6 +4,7 @@
 
 //___________________________________________________//~Wspolne~//___________________________________________________//
 
+// Nazwa kolejki komunikatow i rozmiar
 #define nazwaMQ "/kolejka"
 #define sizeMQ 150
 
@@ -21,6 +22,7 @@ int losowaLiczba(int a, int b) {
 
 //___________________________________________________//~Biblioteka~//___________________________________________________//
 
+// Funkcja tworzaca kolejke komunikatow o danych atrybutach
 mqd_t stworzMQ(const char* nazwa, struct mq_attr *attr) {
 
     mqd_t des = mq_open(nazwa, O_CREAT | O_EXCL | O_RDWR, 0666, NULL);
@@ -32,6 +34,7 @@ mqd_t stworzMQ(const char* nazwa, struct mq_attr *attr) {
 return des;
 }
 
+// Funkcja otwierajaca istniejaca kolejke komunikatow w trybie do czytania
 mqd_t otworzMQ_Read(const char* nazwa) {
 
     mqd_t des = mq_open(nazwa, O_RDONLY);
@@ -43,6 +46,7 @@ mqd_t otworzMQ_Read(const char* nazwa) {
 return des;
 }
 
+// Funkcja otwierajaca istniejaca kolejke komunikatow w trybie do zapisywania
 mqd_t otworzMQ_Write(const char* nazwa) {
 
     mqd_t des = mq_open(nazwa, O_WRONLY);
@@ -54,6 +58,7 @@ mqd_t otworzMQ_Write(const char* nazwa) {
 return des;
 }
 
+// Funkcja zamykajaca kolejke o danym deskryptorze
 void zamknijMQ(mqd_t des) {
 
     if((mq_close(des)) == -1) {
@@ -62,6 +67,7 @@ void zamknijMQ(mqd_t des) {
     }
 }
 
+// Funkcja usuwajaca kolejke o danej nazwie
 void usunMQ(const char* nazwa) {
 
     if((mq_unlink(nazwa)) == -1) {
@@ -70,6 +76,7 @@ void usunMQ(const char* nazwa) {
     }
 }
 
+// Funkcja wysylajaca dana wiadomosc przez kolejke komunikatow
 void wyslijMQ(mqd_t des, const char* msg, int size, int prio) {
 
     if((mq_send(des, msg, size, prio)) == -1) {
@@ -78,6 +85,7 @@ void wyslijMQ(mqd_t des, const char* msg, int size, int prio) {
     }
 }
 
+// Funkcja odbierajaca wiadomosci z kolejki komunikatow
 void odbierzMQ(mqd_t des, char* msg, int size) {
 
     if((mq_receive(des, msg, size, NULL)) == -1) {
@@ -86,6 +94,7 @@ void odbierzMQ(mqd_t des, char* msg, int size) {
     }
 }
 
+// Funkcja zwracaja atrybuty danej kolejki komunikatow
 void getAttr(mqd_t des, mq_attr* attr) {
 
     if((mq_getattr(des, attr)) == -1) {
@@ -94,6 +103,7 @@ void getAttr(mqd_t des, mq_attr* attr) {
     }
 }
 
+// Funkcja ustawiajaca nowe atrybuty dla danej kolejki komunikatow
 void setAttr(mqd_t des, mq_attr* oldAttr, mq_attr* newAttr) {
 
     if((mq_setattr(des, newAttr, oldAttr)) == -1) {
