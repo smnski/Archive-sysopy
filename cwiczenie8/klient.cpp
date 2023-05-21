@@ -47,20 +47,20 @@ int main() {
 
     sprintf(nazwaMQ_klient, "/%d", wlasneID);
 
-    stworzMQ(nazwaMQ_klient, &creation_attr);
+    des_klienta = stworzMQ(nazwaMQ_klient, &creation_attr);
     des_klienta = otworzMQ_Read(nazwaMQ_klient);
 
     atexit(zamknijMQ_Klient_Atexit);
 
     wypiszAtrybuty(des_klienta, &atrybuty);
 
-    //des_serwera = otworzMQ_Write(nazwaMQ);
+    des_serwera = otworzMQ_Write(nazwaMQ);
+
+    std::cout << "Wpisz swoje zapytanie: " << std::endl;
 
     while(fgets(zapytanie, sizeof(zapytanie), stdin) != NULL) {
 
-        std::cout << "Wpisz swoje zapytanie: " << std::endl;
-
-        //sleep(losowaLiczba(1,2));
+        sleep(losowaLiczba(1,5));
 
         sprintf(wiadomosc_wyslij, "%d %s", wlasneID, zapytanie);
         wyslijMQ(des_serwera, wiadomosc_wyslij, sizeMQ, 0);
@@ -69,6 +69,8 @@ int main() {
 
         odbierzMQ(des_klienta, wiadomosc_odbierz, atrybuty.mq_msgsize);
 
-        std::cout << "Odebrano odpowiedz od serwera." << std::endl;
+        std::cout << "Odebrano odpowiedz od serwera: " << wiadomosc_odbierz << std::endl;
+
+        std::cout << "Wpisz swoje zapytanie: " << std::endl;
     }
 }

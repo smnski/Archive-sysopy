@@ -1,59 +1,18 @@
-############################################################################
-# Autor: Szymon Urbański,                              Krakow,  xx.05.2023 #
-# Projekt: Kolejki komunikatow                                             #
-############################################################################
+CPP1 = klient
+CPP2 = serwer
+HED1 = kolLib
 
-##### KATALOG #####
-DIR = $(notdir $(CURDIR))
-##### NAZWY PLIKOW #####
-NAME1 = main
-NAME2 = konsument
-NAME3 = producent
-##### PRZYPISYWANIE NAZW #####
-EXEC1 = $(NAME1).x
-#----------------------
-EXEC2 = $(NAME2).x
-#----------------------
-EXEC3 = $(NAME3).x
-#----------------------
-##### FLAGI I KOMPILATOR #####
-COFLAGS = -Wall -O
-LDFLAGS = -Wall -O
-CO = g++
-LD = $(CO)
-#############################
+.PHONY: all clean
 
-##### KOMPILACJA WSZYSTKICH PROGRAMOW BEZ ICH URUCHAMIANIA #####
-.PHONY: all
-all: $(EXEC1) $(EXEC2) $(EXEC3)
+all: $(CPP1) $(CPP2)
 
-#############################
-$(EXEC1): $(NAME1).cpp
-	 $(LD) -o $@ $(LDFLAGS) $^
-#############################
-$(EXEC2): $(NAME2).cpp
-	 $(LD) -o $@ $(LDFLAGS) $^
-#############################
-$(EXEC3): $(NAME3).cpp
-	 $(LD) -o $@ $(LDFLAGS) $^
-#############################
+$(CPP1): $(CPP1).cpp $(HED1).h
+	g++ $(CPP1).cpp -o $(CPP1)
 
-##### URUCHOMIENIE GLOWNEGO PROGRAMU PO SKOMPILOWANIU #####
-.PHONY: run, compare
+$(CPP2): $(CPP2).cpp $(HED1).h
+	g++ $(CPP2).cpp -o $(CPP2)
 
-compare: $(W) $(Z)
-	@diff -s $(W) $(Z)
-
-run: $(EXEC1)
-	./$(EXEC1) $(W) $(Z)
-
-##### PORZADKI #####
-.PHONY: clean tar
-EXECS = $(EXEC1) $(EXEC2) $(EXEC3)
-
-clean:
-	rm -f *.o *~ *.x $(EXECS)
-
-##### ARCHIWIZACJA I KOMPRESJA #####
-tar: clean
-	(cd ../; tar -cvzf $(DIR).tar.gz $(DIR))
+run: all
+	xterm -hold -title $(CPP1) -e ./$(CPP1) &
+	xterm -hold -title $(CPP1) -e ./$(CPP1) &
+	xterm -hold -title $(CPP2) -e ./$(CPP2) &

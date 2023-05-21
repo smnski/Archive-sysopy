@@ -26,6 +26,8 @@ void wypiszAtrybuty(mqd_t des, mq_attr* attr) {
 
 int main() {
 
+    usunMQ(nazwaMQ);
+
     // Deklaracje zmiennych
 
     char wiadomosc_wyslij[sizeMQ];
@@ -46,7 +48,7 @@ int main() {
 };
     // Koniec deklaracji
 
-    stworzMQ(nazwaMQ, &atrybuty);
+    stworzMQ(nazwaMQ, &creation_attr);
     des_serwera = otworzMQ_Read(nazwaMQ);
 
     atexit(zamknijMQ_Serwer_Atexit);
@@ -57,9 +59,9 @@ int main() {
 
         std::cout << "Serwer oczekuje na zapytanie." << std::endl;
 
-        odbierzMQ(des_serwera, wiadomosc_odbierz, atrybuty.mq_msgsize);
+        sleep(losowaLiczba(1,5));
 
-        //sleep(losowaLiczba(1,2));
+        odbierzMQ(des_serwera, wiadomosc_odbierz, atrybuty.mq_msgsize);
 
         std::cout << "Serwer otrzymal zapytanie." << std::endl;
 
