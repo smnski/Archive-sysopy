@@ -1,6 +1,6 @@
 ========================================================================
-Autor: Szymon Urbański,                              Krakow, 21.05.2023
-Projekt: Kolejki komunikatow                                 
+Autor: Szymon Urbański,                              Krakow, 25.05.2023
+Projekt: Watki                               
 ========================================================================
 
 # Zawartosc:
@@ -9,17 +9,11 @@ Projekt: Kolejki komunikatow
 1. Programy potrzebne do rozwiazania zadania:
 --------------------------------------------------------------------
 
-# klient:
-       Program za pomoca kolejek komunikatow wysyla zapytania do serwera
-       i odbiera od niego odpowiedzi.
-
-# serwer:
-       Program za pomoca kolejek komunikatow odbiera zapytania od klienta,
-       przelicza ich wynik, po czym go zwraca.
-
-# kolLib:
-       Wlasnego autorstwa biblioteka do obslugi funkcji zwiazanych
-       z kolejkami komunikatow.
+# main:
+       Program rozdziela sie na dana ilosc watkow, ktore dla kazdej sekcji
+       wykonuja czesc prywatna oraz krytyczna. Do synchronizacji czesci
+       krytycznych uzywa mutexu. Na sam koniec porownuje otrzymana wartosc
+       po zakonczeniu programu do oczekiwanej.
 
 ------------------------------------------------------------------------
 2. Jak uruchomic programy:
@@ -33,7 +27,11 @@ i jego archiwizacji.
        make all
 
 -> Aby uruchomic program nalezy wykonac:
-       make run
+       make run W=x S=y
+*gdzie za x umieszczamy ilosc watkow, a za y ilosc sekcji.
+
+-> Przykladowe uruchomienie programu:
+       make run W=3 S=4
 
 -> Aby wyczyscic zawartosc katalogu (usunac zbedne pliki), nalezy wykonac:
        make clean
