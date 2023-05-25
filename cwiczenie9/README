@@ -1,0 +1,45 @@
+========================================================================
+Autor: Szymon Urbański,                              Krakow, 21.05.2023
+Projekt: Kolejki komunikatow                                 
+========================================================================
+
+# Zawartosc:
+============
+--------------------------------------------------------------------
+1. Programy potrzebne do rozwiazania zadania:
+--------------------------------------------------------------------
+
+# klient:
+       Program za pomoca kolejek komunikatow wysyla zapytania do serwera
+       i odbiera od niego odpowiedzi.
+
+# serwer:
+       Program za pomoca kolejek komunikatow odbiera zapytania od klienta,
+       przelicza ich wynik, po czym go zwraca.
+
+# kolLib:
+       Wlasnego autorstwa biblioteka do obslugi funkcji zwiazanych
+       z kolejkami komunikatow.
+
+------------------------------------------------------------------------
+2. Jak uruchomic programy:
+------------------------------------------------------------------------
+
+Katalog zawiera program Makefile do kompilacji, linkowania
+i uruchamiania powyzszych programow, a takze czyszczenia katalogu 
+i jego archiwizacji.
+
+-> Aby skompilowac wszystkie programy bez ich uruchamiania, nalezy wykonac:
+       make all
+
+-> Aby uruchomic program nalezy wykonac:
+       make run
+
+-> Aby wyczyscic zawartosc katalogu (usunac zbedne pliki), nalezy wykonac:
+       make clean
+
+-> W celu archiwizacji oraz kompresji katalogu, nalezy wykonac:
+       make tar
+
+------------------------------------------------------------------------
+------------------------------------------------------------------------
