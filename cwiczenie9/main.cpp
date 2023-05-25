@@ -64,7 +64,7 @@ void sekcjaKrytyczna(int *ID, int counter) {
     pthread_mutex_unlock(&myMutex);
 
     travelXY(1, *ID);
-    printf("\033[31mWatek %d zakonczyl wlasna sekcje krytyczna.\033[0m\n", *ID);
+    printf("\033[32mWatek %d zakonczyl wlasna sekcje krytyczna.\033[0m\n", *ID);
     sleep(1);
 }
 
@@ -75,8 +75,16 @@ static void *dzialanieWatku(void *voidID) {
     printf("\033[32mUtworzono watek o ID: %d\033[0m\n", *ID);
     sleep(losowaLiczba(1,3));
 
-    for(int i = 0; i < sekcje; i++) 
+    for(int i = 0; i < sekcje; i++) {
+
+        // Sekcja prywatna
+        travelXY(1, *ID);
+        printf("\033[34mWatek %d realizuje sekcje prywatna nr. %d\033[0m\n\n", *ID, i+1);
+        sleep(losowaLiczba(1,3));
+
+        // Sekcja krytyczna
         sekcjaKrytyczna(ID, i+1);
+    }
 
     return voidID;
 }
@@ -85,18 +93,21 @@ int main(int argc, char** argv) {
 
     if(!czyPoprawneDane(argc, argv)) exit(1);
     watki = atoi(argv[1]), sekcje = atoi(argv[2]);
-    pthread_t watkiID[watki];
 
-    printf("\e[1;1H\e[2J");
+    myMutex = PTHREAD_MUTEX_INITIALIZER;
+    std::cout << "\033[2J\033[1;1H";
     std::cout << "Utworzono mutex o adresie: " << &myMutex << std::endl;
-    sleep(2);
-    printf("\e[1;1H\e[2J");
 
+    pthread_t watkiID[watki];
     for(int i = 0; i < watki; i++) 
-        watkiID[i] = i;
+        watkiID[i] = i+1;
 
+    sleep(2);
+
+    std::cout << "\033[2J\033[1;1H";
     for(int i = 0; i < watki; i++) {
-        int* watekID = new int(i);
+        int *watekID = new int(i);
+        *watekID = i+1;
         pthread_create(&watkiID[i], NULL, &dzialanieWatku, (void *)watekID);
     }
 
@@ -105,7 +116,8 @@ int main(int argc, char** argv) {
 
     sleep(2);
 
-    std::cout << "wartosc kontrolna: " << zmiennaKontrolna << std::endl;
+    std::cout << "Wartosc kontrolna po zakonczeniu programu: " << zmiennaKontrolna << std::endl;
+    std::cout << "Oczekiwana wartosc kontrolna: " << watki * sekcje << std::endl;
 
     pthread_mutex_destroy(&myMutex);
 }
